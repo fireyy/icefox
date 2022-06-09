@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Domain {
+  id        Int     @id @default(autoincrement()) @db.Int
+  domain    String  @unique @db.VarChar(64)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  user      User  @relation(fields: [createBy], references: [id])
+  createBy    Int    @map("create_by")
+  @@index([domain], name: "domain_index")
+  @@index([createdAt], name: "domain_created_at_index")
+  @@index([updatedAt], name: "domain_updated_at_index")
+  @@map("domains")
+}
+
+model Key {
+  id        Int     @id @default(autoincrement())
+  domain    String @db.VarChar(64)
+  path      String @db.VarChar(64)
+  name      String @db.VarChar(64)
+  comment   String? @db.VarChar(128)
+  value     String @db.VarChar(10240)
+  type      Int   @db.TinyInt
+  isDelete  Int @default(0) @map("is_delete") @db.TinyInt
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  publishAt DateTime?  @map(name: "publish_at")
+  user      User   @relation(fields: [createBy], references: [id])
+  createBy    Int    @map("create_by")
+  @@index([isDelete, domain, path, name], name: "key_is_delete_domain_path_name_index")
+  @@index([createdAt], name: "key_created_at_index")
+  @@index([updatedAt], name: "key_updated_at_index")
+  @@map("keys")
+}
+
+model changelog {
+  id        Int     @id @default(autoincrement())
+  keyId     Int   @map("key_id")
+  value     String @db.VarChar(10240)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  user      User   @relation(fields: [createBy], references: [id])
+  createBy    Int    @map("create_by")
+  @@index([keyId, createdAt], name: "changelog_key_id_created_at_index")
+  @@index([createdAt], name: "changelog_created_at_index")
+  @@index([updatedAt], name: "changelog_updated_at_index")
+  @@map("changelogs")
+}
+
+model publishlog {
+  id        Int     @id @default(autoincrement())
+  domain    String @db.VarChar(64)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  user      User   @relation(fields: [createBy], references: [id])
+  createBy    Int    @map("create_by")
+  @@index([domain], name: "publishlog_domain_index")
+  @@index([createBy], name: "publishlog_create_by_index")
+  @@index([createdAt], name: "publishlog_created_at_index")
+  @@index([updatedAt], name: "publishlog_updated_at_index")
+  @@map("publishlogs")
+}
+
+model publishdata {
+  id        Int     @id @default(autoincrement())
+  publishId    Int @map(name: "publish_id")
+  path      String @db.VarChar(64)
+  name      String @db.VarChar(64)
+  value     String @db.VarChar(10240)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  @@index([publishId], name: "publishdata_publish_id_index")
+  @@index([createdAt], name: "publishdata_created_at_index")
+  @@index([updatedAt], name: "publishdata_updated_at_index")
+  @@map("publishdatas")
+}
+
+model privilege {
+  id        Int     @id @default(autoincrement())
+  domain    String @db.VarChar(64)
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  user      User   @relation(fields: [userId], references: [id])
+  userId    Int    @map("user_id")
+  createBy  Int  @map(name: "create_by")
+  @@index([userId], name: "privilege_user_id_index")
+  @@index([domain, userId], name: "privilege_domain_user_id_index")
+  @@index([createdAt], name: "privilege_created_at_index")
+  @@index([updatedAt], name: "privilege_updated_at_index")
+  @@map("privileges")
+}
+
+model Account {
+  id                 Int     @id @default(autoincrement())
+  userId             Int     @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+  oauth_token_secret String?
+  oauth_token        String?
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           Int      @id @default(autoincrement())
+  sessionToken String   @unique @map("session_token")
+  userId       Int      @map("user_id")
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("sessions")
+}
+
+model User {
+  id            Int       @id @default(autoincrement())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime? @map("email_verified")
+  image         String?
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+  domains       Domain[]
+  keys          Key[]
+  accounts      Account[]
+  sessions      Session[]
+  changelogs    changelog[]
+  publishlogs   publishlog[]
+  privileges   privilege[]
+  role          String     @default("USER")
+  @@map(name: "users")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  @@unique([identifier, token])
+  @@map("verificationtokens")
+}
