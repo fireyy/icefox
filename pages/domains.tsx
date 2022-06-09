@@ -31,7 +31,7 @@ const Domains: NextPage = () => {
     })
     mutate()
     setToast({
-      text: t('Added Successfully.', {
+      text: t('Added Successfully', {
         msg: t('Domain')
       }),
       type: 'success',
@@ -40,14 +40,34 @@ const Domains: NextPage = () => {
     setLoading(false)
   })
 
+  const removeDomain = async (domain: string) => {
+    const res = await fetch(`/api/${domain}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' }
+    })
+    const result = await res.json()
+    if (result.name === 'OK') {
+      mutate()
+      setToast({
+        text: t('Removed Successfully', {
+          msg: t('Domain')
+        })
+      })
+    } else {
+      setToast({
+        text: t(result.message)
+      })
+    }
+  }
+
   const renderLinks = () => {
     return (
       <a>123</a>
     )
   }
-  const renderAction = () => {
+  const renderAction = (id: number, rowData: any) => {
     return (
-      <Button type="error" auto scale={1/3} font="12px">Remove</Button>
+      <Button type="secondary" auto scale={1/3} font="12px" onClick={() => removeDomain(rowData.domain)}>{t('Delete')}</Button>
     )
   }
 

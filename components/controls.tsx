@@ -37,6 +37,10 @@ const UserSettingsPop: React.FC<Props> = ({ email }) => {
         Signed in as {email}
       </DropdownItem>
       <DropdownItem>
+        <NextLink href="/domains">{t('Domains')}</NextLink>
+      </DropdownItem>
+      <DropdownItem line />
+      <DropdownItem>
         {t('Lang')}
         <Select
           disableMatchWidth

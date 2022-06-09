@@ -7,7 +7,7 @@ export const Dropdown = React.forwardRef<
   HTMLDivElement,
   { children: React.ReactNode } & PopoverProps &
     React.RefAttributes<HTMLDivElement>
->(function Dropdown({ children, className, portalClassName, content, ...props }, forwardedRef) {
+>(function Dropdown({ children, className, portalClassName, content, placement='bottomEnd', ...props }, forwardedRef) {
   const theme = useTheme()
   const isMobile = useMediaQuery('xs', { match: 'down' })
   const [visible, setVisible] = useState(false)
@@ -30,7 +30,7 @@ export const Dropdown = React.forwardRef<
       }
       {
         !isMobile && (
-          <Popover ref={forwardedRef} placement="bottomEnd" hideArrow content={content} portalClassName={clsx('drop-menu-box', portalClassName)} {...props}>
+          <Popover ref={forwardedRef} placement={placement} hideArrow content={content} portalClassName={clsx('drop-menu-box', portalClassName)} {...props}>
             <div className={clsx('dropdown-button', className)}>{children}</div>
           </Popover>
         )
@@ -58,6 +58,7 @@ export const Dropdown = React.forwardRef<
           display: block;
           flex: 1;
           cursor: pointer;
+          color: ${theme.palette.accents_5};
         }
       `}</style>
     </>

@@ -50,3 +50,8 @@ export function timeAgo (time: string) {
 export function formatDate (time: string) {
   return dayjs(time).format('YYYY-MM-DD HH:mm:ss')
 }
+
+export function getCurrentRoutePath () {
+  const names = Router.pathname.split('/').filter(r => !!r)
+  return names[0] || ''
+}

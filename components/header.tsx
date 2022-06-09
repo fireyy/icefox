@@ -4,14 +4,17 @@ import NextLink from 'next/link'
 import Controls from './controls'
 import { useTheme, Tabs } from '@geist-ui/core'
 import useTranslation from 'next-translate/useTranslation'
+import useSWR from 'swr'
+import DomainSelect from 'components/domain-select'
+import Divider from '@geist-ui/icons/divider'
+import { getCurrentRoutePath } from 'lib/utils'
 
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
   const { t } = useTranslation('common')
 
-  const names = router.pathname.split('/').filter(r => !!r)
-  const currentUrlTabValue = names[0] || ''
+  const currentUrlTabValue = getCurrentRoutePath()
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -22,6 +25,8 @@ const Header: React.FC<unknown> = () => {
     },
     [currentUrlTabValue],
   )
+
+  const { data: domains } = useSWR(`/api/domains`)
 
   return (
     <>
@@ -39,7 +44,8 @@ const Header: React.FC<unknown> = () => {
                 </a>
               </NextLink>
             </div>
-
+            <Divider color={theme.palette.accents_2} />
+            <DomainSelect data={domains} />
             <div className="menu">
               <Tabs
                 value={currentUrlTabValue}
@@ -51,7 +57,6 @@ const Header: React.FC<unknown> = () => {
                 <Tabs.Item font="14px" label={t('Data')} value="data" />
                 <Tabs.Item font="14px" label={t('Publish Log')} value="publishlog" />
                 <Tabs.Item font="14px" label={t('Privilege')} value="privilege" />
-                <Tabs.Item font="14px" label={t('Domains')} value="domains" />
               </Tabs>
             </div>
 
