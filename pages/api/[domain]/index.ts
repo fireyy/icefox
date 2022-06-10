@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import roleProtect from 'lib/role-protect'
+import { setScopeCookie } from 'lib/cookies'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -30,11 +31,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
 // GET /api/:domain
 async function handleGET(domain: string, res: NextApiResponse) {
-  const post = await prisma.domain.findUnique({
+  const result = await prisma.domain.findUnique({
     where: { domain },
   })
-  if (post) {
-    res.json(post)
+  if (result) {
+    setScopeCookie(res, domain)
+    res.json(result)
   } else {
     res.json({})
   }

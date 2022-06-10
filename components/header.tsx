@@ -6,13 +6,15 @@ import { useTheme, Tabs } from '@geist-ui/core'
 import useSWR from 'swr'
 import DomainSelect from 'components/domain-select'
 import Divider from '@geist-ui/icons/divider'
-import { getCurrentRoutePath } from 'lib/utils'
+
 
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
 
-  const currentUrlTabValue = getCurrentRoutePath()
+  const names = router.pathname.split('/').filter(r => !!r)
+  // /[domain]/xxxxx
+  const currentUrlTabValue = names[0] ? names[1] : ''
 
   const handleTabChange = useCallback(
     (tab: string) => {

@@ -11,7 +11,7 @@ const nextConfig = async (phase, { defaultConfig }) => {
     publicRuntimeConfig: {
       baseUrl: process.env.NEXTAUTH_URL || 'http://localhost:3000',
       staticPath: process.env.STORAGE_PROVIDER === 'local' ? '/uploads/' : process.env.QINIU_BASEURL
-    }
+    },
   }
   return nextConfig
 }

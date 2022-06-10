@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from 'lib/prisma'
 import roleProtect from 'lib/role-protect'
+import { setScopeCookie } from 'lib/cookies'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -13,7 +14,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   if (session) {
     switch (method) {
       case 'GET':
-        await handleGET(res)
+        await handleGET(req, res)
         break
       case 'PUT':
         await handlePUT({
@@ -31,8 +32,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 }
 
 // GET /api/domains
-async function handleGET(res: NextApiResponse) {
+async function handleGET(req:NextApiRequest, res: NextApiResponse) {
   const domain = await prisma.domain.findMany()
+  const hasScope = !!req.cookies.scope
+  if (domain && domain.length > 0 && !hasScope) {
+    setScopeCookie(res, domain[0].domain)
+  }
   res.json(domain)
 }
 

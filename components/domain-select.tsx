@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Button } from '@geist-ui/core'
 import { Dropdown, DropdownItem } from 'components/dropdown'
 import ChevronUpDown from '@geist-ui/icons/chevronUpDown'
 import Check from '@geist-ui/icons/check'
+import Plus from '@geist-ui/icons/plus'
 
 type Props = {
   data: any
@@ -13,11 +15,15 @@ const DomainSelect: React.FC<Props> = ({ data }) => {
   const router = useRouter()
   const domain = ''
 
-  const handleSelect = (domain: string) => {
-    router.push({
-      pathname: router.pathname,
-      query: { domain },
+  const handleSelect = async (domain: string) => {
+    const res = await fetch(`/api/${domain}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' }
     })
+    const result = await res.json()
+    if (result.domain === domain) {
+      router.push(router.pathname.replace('[domain]', domain))
+    }
   }
 
   const UserSettingsPop = () => {
@@ -40,6 +46,10 @@ const DomainSelect: React.FC<Props> = ({ data }) => {
             )
           })
         }
+        <DropdownItem>
+          <Link href="/domains">Add New Domain</Link>
+          <Plus size={18} />
+        </DropdownItem>
       </>
     )
   }
