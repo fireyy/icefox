@@ -46,8 +46,18 @@ export const Dropdown = React.forwardRef<
         .drop-menu-box .item {
           border-radius: 6px;
         }
-        .drop-menu-box .item:hover {
+        .drop-menu-box .item span {
+          flex: 1;
+        }
+        .drop-menu-box .item:hover:not(.title) {
           background-color: ${theme.palette.accents_2};
+        }
+        .drop-menu-box .item.title {
+          font-size: 12px !important;
+        }
+        .drop-menu-box .item.checked {
+          font-weight: 500;
+          color: ${theme.palette.accents_8};
         }
         .drop-menu-box .item.disabled {
           cursor: not-allowed;

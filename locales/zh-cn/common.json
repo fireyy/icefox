@@ -32,5 +32,6 @@
   "OK": "确定",
   "Added successfully": "添加{{msg}}成功。",
   "Removed successfully": "移除{{msg}}成功。",
-  "Domain is not empty": "请先删除该域名下的所有数据后再删除域名。"
+  "Domain is not empty": "请先删除该域名下的所有数据后再删除域名。",
+  "operation": "操作"
 }

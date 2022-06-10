@@ -109,7 +109,7 @@ const Header: React.FC<unknown> = () => {
         }
         .menu {
           flex: 1 1;
-          padding: 0 ${theme.layout.gap};
+          padding: 0 ${theme.layout.gapHalf};
         }
         .menu :global(.content) {
           display: none;

@@ -32,5 +32,6 @@
   "OK": "OK",
   "Added successfully": "Added {{msg}} successfully.",
   "Removed successfully": "Removed {{msg}} successfully.",
-  "Domain is not empty": "Please remove all data in this domain first."
+  "Domain is not empty": "Please remove all data in this domain first.",
+  "operation": "operation"
 }

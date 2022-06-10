@@ -6,6 +6,7 @@ import Layout from 'components/layout'
 import useTranslation from 'next-translate/useTranslation'
 import { useForm } from 'react-hook-form'
 import useSWR from 'swr'
+import { formatDate } from 'lib/utils'
 
 type FormData = {
   domain: string
@@ -73,7 +74,7 @@ const Domains: NextPage = () => {
 
   return (
     <Layout title={t('Domains')}>
-      <Grid.Container gap={2} marginTop={1} justify="flex-start">
+      <Grid.Container gap={2} justify="flex-start">
         <Grid md={12}>
           <Input placeholder='domain filter' />
         </Grid>
@@ -84,10 +85,10 @@ const Domains: NextPage = () => {
         </Grid>
         <Grid md={24}>
           <Table data={domains}>
-            <Table.Column prop="domain" label="domain" />
-            <Table.Column prop="comment" label="Links" render={renderLinks} />
-            <Table.Column prop="createdAt" label="time" />
-            <Table.Column prop="id" label="operation" width={150} render={renderAction} />
+            <Table.Column prop="domain" label={t('Domain')} />
+            <Table.Column prop="comment" label="" render={renderLinks} />
+            <Table.Column prop="createdAt" label={t('createdAt')} render={(time: string) => (<>{formatDate(time)}</>)} />
+            <Table.Column prop="id" label={t('operation')} width={100} render={renderAction} />
           </Table>
         </Grid>
       </Grid.Container>
