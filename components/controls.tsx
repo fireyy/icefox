@@ -13,9 +13,7 @@ import MoonIcon from '@geist-ui/icons/moon'
 import SunIcon from '@geist-ui/icons/sun'
 import Display from '@geist-ui/icons/display'
 import { useTheme as useNextTheme } from 'next-themes'
-import setLanguage from 'next-translate/setLanguage'
 import { useRouter } from 'next/router'
-import useTranslation from 'next-translate/useTranslation'
 import { Dropdown, DropdownItem } from 'components/dropdown'
 
 type Props = {
@@ -24,12 +22,6 @@ type Props = {
 
 const UserSettingsPop: React.FC<Props> = ({ email }) => {
   const { theme, setTheme } = useNextTheme()
-  const { locale, locales = [] } = useRouter()
-  const { t } = useTranslation('common')
-
-  const switchLocale = async (lang: string | string[]) => {
-    await setLanguage(lang as string)
-  }
 
   return (
     <>
@@ -37,63 +29,41 @@ const UserSettingsPop: React.FC<Props> = ({ email }) => {
         Signed in as {email}
       </DropdownItem>
       <DropdownItem>
-        <NextLink href="/domains">{t('Domains')}</NextLink>
+        <NextLink href="/domains">Domains</NextLink>
       </DropdownItem>
       <DropdownItem line />
       <DropdownItem>
-        {t('Lang')}
-        <Select
-          disableMatchWidth
-          height="28px"
-          onChange={switchLocale}
-          value={locale}
-          title={t('Switch Language')}
-          ml={0.5}
-          style={{ minWidth: '7em' }}>
-          {
-            locales.map(l => (
-              <Select.Option key={l} value={l}>
-                <span className="select-content">
-                  {t(`${l}`)}
-                </span>
-              </Select.Option>
-            ))
-          }
-        </Select>
-      </DropdownItem>
-      <DropdownItem line />
-      <DropdownItem>
-        {t('Theme')}
+        Theme
         <Select
           disableMatchWidth
           height="28px"
           onChange={(type) => setTheme(type as string)}
           value={theme}
-          title={t('Switch Themes')}
+          title="Switch Themes"
           ml={0.5}
           style={{ minWidth: '7em' }}>
           <Select.Option value="system">
             <span className="select-content">
-              <Display size={12} /> {t('System')}
+              <Display size={12} /> System
             </span>
           </Select.Option>
           <Select.Option value="light">
             <span className="select-content">
-              <SunIcon size={12} /> {t('Light')}
+              <SunIcon size={12} /> Light
             </span>
           </Select.Option>
           <Select.Option value="dark">
             <span className="select-content">
-              <MoonIcon size={12} /> {t('Dark')}
+              <MoonIcon size={12} /> Dark
             </span>
           </Select.Option>
         </Select>
       </DropdownItem>
       <DropdownItem line />
       <DropdownItem>
-        <a href="/api/auth/signout">
-          {t('Logout')}
-        </a>
+        <Link href="/api/auth/signout">
+          Logout
+        </Link>
       </DropdownItem>
       <style jsx>{`
         .select-content {
@@ -115,7 +85,6 @@ const UserSettingsPop: React.FC<Props> = ({ email }) => {
 const Controls: React.FC<unknown> = React.memo(() => {
   const { data: session } = useSession()
   const theme = useTheme()
-  const { t } = useTranslation('common')
 
   return (
     <div className="wrapper">
@@ -124,7 +93,7 @@ const Controls: React.FC<unknown> = React.memo(() => {
         command
         font="12px"
         className="shortcuts"
-        title={t('search title')}>
+        title="search title">
         K
       </Keyboard>
       <Spacer w={0.75} />

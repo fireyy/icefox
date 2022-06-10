@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Button } from '@geist-ui/core'
-import useTranslation from 'next-translate/useTranslation'
 import { Dropdown, DropdownItem } from 'components/dropdown'
 import ChevronUpDown from '@geist-ui/icons/chevronUpDown'
 import Check from '@geist-ui/icons/check'
@@ -11,7 +10,6 @@ type Props = {
 }
 
 const DomainSelect: React.FC<Props> = ({ data }) => {
-  const { t } = useTranslation('common')
   const router = useRouter()
   const domain = ''
 
@@ -26,7 +24,7 @@ const DomainSelect: React.FC<Props> = ({ data }) => {
     return (
       <>
         <DropdownItem title disableAutoClose>
-          {t('Domains')}
+          Domains
         </DropdownItem>
         {
           data.map((item: any) => {

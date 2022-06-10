@@ -7,7 +7,6 @@ import useRequireAuth from 'lib/use-require-auth'
 import Header from 'components/header'
 import Search from 'components/search'
 import LoadingDots from 'components/loading-dots'
-import useTranslation from 'next-translate/useTranslation'
 
 type WithChildren<T = {}> = T & PropsWithChildren<{}>;
 
@@ -19,7 +18,6 @@ export default function Layout({ title, children }: LayoutProps) {
   const router = useRouter()
   const theme = useTheme()
   const isFront = router.pathname.startsWith('/sign-in')
-  const { t } = useTranslation('common')
 
   const session = useRequireAuth()
   if (!isFront && !session) return <LoadingDots />
@@ -27,7 +25,7 @@ export default function Layout({ title, children }: LayoutProps) {
   return (
     <>
       <Head>
-        <title>{`${title} - ${t('IceFox')}`}</title>
+        <title>{`${title} - IceFox`}</title>
       </Head>
       {
         !isFront && (

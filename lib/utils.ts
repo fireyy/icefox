@@ -1,7 +1,6 @@
 import Router from 'next/router'
 import dayjs from 'dayjs'
 import relativeTime from 'dayjs/plugin/relativeTime'
-import 'dayjs/locale/zh-cn'
 
 const hexToRgb = (color: string): [number, number, number] => {
   const fullReg = /^#?([a-f\d])([a-f\d])([a-f\d])$/i
@@ -44,7 +43,7 @@ export const addColorAlpha = (color: string, alpha: number) => {
 
 export function timeAgo (time: string) {
   dayjs.extend(relativeTime)
-  return dayjs(time).locale(Router.locale as string).fromNow()
+  return dayjs(time).fromNow()
 }
 
 export function formatDate (time: string) {

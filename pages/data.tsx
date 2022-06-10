@@ -1,13 +1,13 @@
 import type { NextPage } from 'next'
 import Layout from 'components/layout'
 
-const Home: NextPage = () => {
+const Data: NextPage = () => {
 
   return (
-    <Layout title="Dashboard">
-      Dashboard
+    <Layout title="Data">
+      Data
     </Layout>
   )
 }
 
-export default Home
+export default Data

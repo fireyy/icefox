@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import Controls from './controls'
 import { useTheme, Tabs } from '@geist-ui/core'
-import useTranslation from 'next-translate/useTranslation'
 import useSWR from 'swr'
 import DomainSelect from 'components/domain-select'
 import Divider from '@geist-ui/icons/divider'
@@ -12,7 +11,6 @@ import { getCurrentRoutePath } from 'lib/utils'
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
-  const { t } = useTranslation('common')
 
   const currentUrlTabValue = getCurrentRoutePath()
 
@@ -35,7 +33,7 @@ const Header: React.FC<unknown> = () => {
           <div className="content">
             <div className="logo">
               <NextLink href={`/`}>
-                <a aria-label={t('Go Home')} title={t('IceFox')}>
+                <a aria-label="Go Home" title="IceFox">
                   <svg aria-label="logo" height="20" viewBox="0 0 142 140" fill={theme.palette.foreground}>
                     <path d="M25.5 9L50.1817 54.75H0.818275L25.5 9Z" />
                     <path d="M116.5 9L141.182 54.75H91.8183L116.5 9Z" />
@@ -53,10 +51,10 @@ const Header: React.FC<unknown> = () => {
                 activeClassName="current"
                 hideDivider
                 onChange={handleTabChange}>
-                <Tabs.Item font="14px" label={t('Overview')} value="" />
-                <Tabs.Item font="14px" label={t('Data')} value="data" />
-                <Tabs.Item font="14px" label={t('Publish Log')} value="publishlog" />
-                <Tabs.Item font="14px" label={t('Privilege')} value="privilege" />
+                <Tabs.Item font="14px" label="Overview" value="" />
+                <Tabs.Item font="14px" label="Data" value="data" />
+                <Tabs.Item font="14px" label="Publish Log" value="publishlog" />
+                <Tabs.Item font="14px" label="Privilege" value="privilege" />
               </Tabs>
             </div>
 

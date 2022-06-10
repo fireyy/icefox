@@ -16,7 +16,6 @@ import SearchItems, { SearchItemsRef } from './search-items'
 import { useRouter } from 'next/router'
 import useDebounce from 'lib/use-debounce'
 import MaskLoading from 'components/mask-loading'
-import useTranslation from 'next-translate/useTranslation'
 
 const Search: React.FC<unknown> = () => {
   const theme = useTheme()
@@ -30,7 +29,6 @@ const Search: React.FC<unknown> = () => {
   const debouncedSearchTerm: string = useDebounce<string>(input, 500)
   const [onComposition, setOnComposition] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const { t } = useTranslation('common')
 
   const cleanAfterModalClose = () => {
     setVisible(false)
@@ -128,7 +126,7 @@ const Search: React.FC<unknown> = () => {
           w="100%"
           font="1.125rem"
           py={0.75}
-          placeholder={t('Search an app')}
+          placeholder="Search an item"
           className="search-input"
           clearable
           onCompositionStart={handleComposition}
