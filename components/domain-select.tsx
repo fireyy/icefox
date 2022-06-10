@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { Button } from '@geist-ui/core'
+import { Button, useTheme } from '@geist-ui/core'
 import { Dropdown, DropdownItem } from 'components/dropdown'
 import ChevronUpDown from '@geist-ui/icons/chevronUpDown'
 import Check from '@geist-ui/icons/check'
@@ -9,11 +9,13 @@ import Plus from '@geist-ui/icons/plus'
 
 type Props = {
   data: any
+  scope: string
 }
 
-const DomainSelect: React.FC<Props> = ({ data }) => {
+const DomainSelect: React.FC<Props> = ({ data, scope }) => {
   const router = useRouter()
-  const domain = ''
+  const theme = useTheme()
+  const domain = scope
 
   const handleSelect = async (domain: string) => {
     const res = await fetch(`/api/${domain}`, {
@@ -56,18 +58,22 @@ const DomainSelect: React.FC<Props> = ({ data }) => {
   return (
     <>
       <Dropdown content={<UserSettingsPop />} placement="bottomStart" portalClassName="domain-select">
-        <Button type="abort" auto iconRight={<ChevronUpDown />} scale={2/3} pl={0.2}>{domain}</Button>
+        <Button type="abort" auto iconRight={<ChevronUpDown />} scale={2/3} pl={0.2}>{(domain || '').split('.')[0]}</Button>
       </Dropdown>
       <style jsx global>{`
         .tooltip-content.popover.drop-menu-box.domain-select {
           width: 280px;
         }
         .tooltip .dropdown-button .btn {
-          width: 120px;
-          max-width: 120px;
+          width: 100px;
+          max-width: 100px;
+          font-weight: 500;
+          font-size: 14px;
+          color: ${theme.palette.accents_6};
+          text-transform: none;
         }
         .tooltip .dropdown-button .btn .text {
-          width: 100px;
+          width: 80px;
           overflow: hidden;
           white-space: nowrap;
           text-overflow: ellipsis;

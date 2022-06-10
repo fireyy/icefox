@@ -24,3 +24,9 @@ export const setScopeCookie = (res: NextApiResponse, domain: string) => {
     maxAge: 60 * 60 * 24 * 7 // 1 week
   })
 }
+
+export const getCookie = (key: string) => {
+  const cookieData = document.cookie.match('(^|;)\\s*' + key + '\\s*=\\s*([^;]+)')?.pop() || ''
+
+  return cookieData.replace(/(%[\dA-F]{2})+/gi, decodeURIComponent)
+}
