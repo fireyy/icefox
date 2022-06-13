@@ -56,7 +56,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     setLoading(true)
     let url = isEdit ? `/api/data/${item}` : `/api/${domain}/data`
     const res = await fetch(url, {
-      method: 'PUT',
+      method: isEdit ? 'PATCH' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(isEdit ? {
         value: data.value,

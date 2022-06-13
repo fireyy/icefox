@@ -18,16 +18,16 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       case 'GET':
         await handleGET(id, res)
         break
-      case 'PUT':
-        await handlePUT(id, {
+      case 'PATCH':
+        await handlePATCH(id, {
           ...data
-        }, res)
+        }, Number(session.user.id), res)
         break
       case 'DELETE':
         await handleDELETE(id, res)
         break
       default:
-        res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
+        res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } else {
@@ -43,19 +43,43 @@ async function handleGET(id: number, res: NextApiResponse) {
   res.json(result)
 }
 
-// PUT /api/data/:id
-async function handlePUT(id: number, data: any, res: NextApiResponse) {
+// PATCH /api/data/:id
+async function handlePATCH(id: number, data: any, userId: number, res: NextApiResponse) {
+  const key = await prisma.key.findFirst({
+    where: { id, isDelete: 0 },
+    select: {
+      value: true
+    }
+  })
+  if (!key) {
+    res.json({
+      name: 'KEY_NOT_FOUND',
+      message: 'key is not found'
+    })
+  }
   const result = await prisma.key.update({
     where: { id },
     data: { ...data },
   })
+  if (key && data.value !== key.value) {
+    await prisma.changelog.create({
+      data: {
+        keyId: id,
+        value: data.value,
+        createBy: userId,
+      },
+    })
+  }
   res.json(result)
 }
 
 // DELETE /api/data/:id
 async function handleDELETE(id: number, res: NextApiResponse) {
-  const result = await prisma.key.delete({
+  const result = await prisma.key.update({
     where: { id },
+    data: {
+      isDelete: 1,
+    }
   })
   res.json(result)
 }

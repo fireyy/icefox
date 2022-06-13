@@ -16,8 +16,9 @@ const Data: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(0)
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
+  const domain = router.query.domain
 
-  const { data, error, mutate } = useSWR(`/api/${router.query.domain}/data`)
+  const { data, error, mutate } = useSWR(`/api/${domain}/data`)
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -73,7 +74,7 @@ const Data: NextPage = () => {
         <Spacer w={0.5} />
         <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
         <Spacer w={0.5} />
-        <Button auto scale={0.25}>History</Button>
+        <Button auto scale={0.25} onClick={() => router.push(`/${domain}/data/${id}/changelog`)}>History</Button>
       </>
     )
   }

@@ -37,7 +37,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 // GET /api/:domain/data
 async function handleGET(domain: string, res: NextApiResponse) {
   const result = await prisma.key.findMany({
-    where: { domain },
+    where: { domain, isDelete: 0 },
   })
   res.json(result)
 }
@@ -46,7 +46,21 @@ async function handleGET(domain: string, res: NextApiResponse) {
 async function handlePUT(data: any, res: NextApiResponse) {
   const result = await prisma.key.create({
     data: { ...data },
+    select: {
+      id: true,
+      value: true,
+      createBy: true
+    }
   })
+  if (result.id) {
+    await prisma.changelog.create({
+      data: {
+        keyId: result.id,
+        value: result.value,
+        createBy: result.createBy,
+      },
+    })
+  }
   res.json(result)
 }
 
