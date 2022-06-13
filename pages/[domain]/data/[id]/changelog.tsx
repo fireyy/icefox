@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts, Breadcrumbs } from '@geist-ui/core'
+import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts, Breadcrumbs, Pagination } from '@geist-ui/core'
 import Layout from 'components/layout'
 import useSWR from 'swr'
 import ArrowLeft from '@geist-ui/icons/arrowLeft'
@@ -15,9 +15,10 @@ const Changelog: NextPage = () => {
   const { setToast } = useToasts()
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const [value, setValue] = useState('')
+  const [pageIndex, setPageIndex] = useState(1)
 
   const { data: keyData } = useSWR(`/api/data/${keyId}`)
-  const { data, error, mutate } = useSWR(`/api/data/${keyId}/changelog`)
+  const { data = {}, error, mutate } = useSWR(`/api/data/${keyId}/changelog?page=${pageIndex}&limit=10`)
 
   const handleReuse = async (val: string) => {
     setModalVisible(true)
@@ -64,12 +65,15 @@ const Changelog: NextPage = () => {
           <Input placeholder='value filter' />
         </Grid>
         <Grid md={24}>
-          <Table data={data}>
+          <Table data={data.data || []}>
             <Table.Column prop="value" label="value" />
             <Table.Column prop="creatBy" label="by" render={renderUser} />
             <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
             <Table.Column prop="id" label="operation" width={100} render={renderAction} />
           </Table>
+        </Grid>
+        <Grid md={24}>
+          <Pagination count={data.pageCount} onChange={(p) => setPageIndex(p)} />
         </Grid>
       </Grid.Container>
       <Modal {...modalBindings}>
