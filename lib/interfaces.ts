@@ -29,3 +29,5 @@ export type DataItem = {
   user?: User
   createBy: Number
 }
+
+export type DataItems = Array<DataItem>

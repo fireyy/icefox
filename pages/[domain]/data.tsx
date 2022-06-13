@@ -7,25 +7,45 @@ import Layout from 'components/layout'
 import { useRouter } from 'next/router'
 import DataDrawer from 'components/data-drawer'
 import useSWR from 'swr'
+import { DataItem, DataItems } from 'lib/interfaces'
 
 const Data: NextPage = () => {
   const router = useRouter()
   const [sideVisible, setSideVisible] = useState(false)
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
-  const [current, setCurrent] = useState()
+  const [current, setCurrent] = useState(0)
 
   const { data, error, mutate } = useSWR(`/api/${router.query.domain}/data`)
 
-  const handleUpdate = (type: string, payload: any) => {
+  const handleUpdate = (type: string, data: any) => {
     if (type === 'add') {
       mutate()
+    } else if (type === 'update') {
+      mutate((mate: DataItems) => {
+        const index = mate.findIndex((item: DataItem) => item.id === data.id)
+        mate[index] = data
+        return mate
+      })
+    } else if (type === 'remove') {
+      mutate(data.filter((item: DataItem) => item.id !== current))
     }
   }
 
-  const renderAction = () => {
+  const handleEdit = (id: number) => {
+    setCurrent(id)
+    setSideVisible(true)
+  }
+
+  const renderAction = (id: number) => {
     return (
-      <>111</>
+      <>
+        <Button auto scale={0.25} onClick={() => handleEdit(id)}>Edit</Button>
+        <Spacer w={0.5} />
+        <Button auto scale={0.25}>Remove</Button>
+        <Spacer w={0.5} />
+        <Button auto scale={0.25}>History</Button>
+      </>
     )
   }
 
@@ -54,7 +74,7 @@ const Data: NextPage = () => {
             <Table.Column prop="name" label="name" />
             <Table.Column prop="value" label="value" />
             <Table.Column prop="comment" label="comment" />
-            <Table.Column prop="id" label="operation" width={100} render={renderAction} />
+            <Table.Column prop="id" label="operation" width={250} render={renderAction} />
           </Table>
         </Grid>
       </Grid.Container>
