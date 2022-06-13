@@ -73,7 +73,7 @@ const Domains: NextPage = () => {
           <Input placeholder='domain filter' />
         </Grid>
         <Grid md={12} justify="flex-end">
-          <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)}>
+          <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)} scale={2/3}>
             New
           </Button>
         </Grid>
