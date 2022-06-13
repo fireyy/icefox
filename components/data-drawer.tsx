@@ -54,7 +54,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
       data.value = 'false'
     }
     setLoading(true)
-    let url = isEdit ? `/api/data/${item}` : '/api/${domain}/data'
+    let url = isEdit ? `/api/data/${item}` : `/api/${domain}/data`
     const res = await fetch(url, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -65,13 +65,12 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     })
     const result = await res.json()
     if (result.id) {
+      handleDrawerClose()
       setToast({
-        text: 'Added new data Successfully.',
+        text: isEdit ? 'Updated data Successfully.' : 'Added new data Successfully.',
         type: 'success',
       })
-      setVisible(false)
       onUpdate(isEdit ? 'update' : 'add', result)
-      resetData()
     } else {
       setToast({
         text: 'Failed to add new data.',
@@ -81,9 +80,14 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     setLoading(false)
   })
 
+  const handleDrawerClose = () => {
+    setVisible(false)
+    resetData()
+  }
+
   return (
     <>
-      <Drawer visible={visible} onClose={() => setVisible(false)} placement="right">
+      <Drawer visible={visible} onClose={handleDrawerClose} placement="right">
         <Drawer.Subtitle>Add new key to {domain}</Drawer.Subtitle>
         <Drawer.Content>
           <form className="data-drawer" onSubmit={onSubmit}>
@@ -141,6 +145,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
       <style jsx>{`
         .data-drawer {
           width: 350px;
+          overflow: auto;
         }
       `}</style>
     </>

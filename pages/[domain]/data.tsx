@@ -15,21 +15,27 @@ const Data: NextPage = () => {
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(0)
+  const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
 
   const { data, error, mutate } = useSWR(`/api/${router.query.domain}/data`)
 
-  const handleUpdate = (type: string, data: any) => {
+  const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
       mutate()
     } else if (type === 'update') {
       mutate((mate: DataItems) => {
-        const index = mate.findIndex((item: DataItem) => item.id === data.id)
-        mate[index] = data
+        const index = mate.findIndex((item: DataItem) => item.id === payload.id)
+        mate[index] = payload
         return mate
       })
     } else if (type === 'remove') {
-      mutate(data.filter((item: DataItem) => item.id !== current))
+      mutate(data.filter((item: DataItem) => item.id !== payload.id))
     }
+  }
+
+  const handleNew = () => {
+    setCurrent(0)
+    setSideVisible(true)
   }
 
   const handleEdit = (id: number) => {
@@ -37,12 +43,35 @@ const Data: NextPage = () => {
     setSideVisible(true)
   }
 
+  const handleRemove = (id: number) => {
+    setCurrent(id)
+    setModalVisible(true)
+  }
+
+  const onRemove = async () => {
+    setLoading(true)
+    const res = await fetch(`/api/data/${current}`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    })
+    const result = await res.json()
+    if (result) {
+      setToast({
+        text: 'Removed data Successfully.',
+        type: 'success',
+      })
+      handleUpdate('remove', result)
+      setModalVisible(false)
+    }
+    setLoading(false)
+  }
+
   const renderAction = (id: number) => {
     return (
       <>
         <Button auto scale={0.25} onClick={() => handleEdit(id)}>Edit</Button>
         <Spacer w={0.5} />
-        <Button auto scale={0.25}>Remove</Button>
+        <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
         <Spacer w={0.5} />
         <Button auto scale={0.25}>History</Button>
       </>
@@ -64,7 +93,7 @@ const Data: NextPage = () => {
             Publish
           </Button>
           <Spacer w={0.5} />
-          <Button auto type="secondary" icon={<Plus />} onClick={() => setSideVisible(true)} scale={2/3}>
+          <Button auto type="secondary" icon={<Plus />} onClick={handleNew} scale={2/3}>
             New
           </Button>
         </Grid>
@@ -79,6 +108,14 @@ const Data: NextPage = () => {
         </Grid>
       </Grid.Container>
       <DataDrawer visible={sideVisible} setVisible={setSideVisible} item={current} onUpdate={handleUpdate} />
+      <Modal {...modalBindings}>
+        <Modal.Title>Confirm</Modal.Title>
+        <Modal.Content>
+          Are you sure you want to delete this item?
+        </Modal.Content>
+        <Modal.Action passive onClick={() => setModalVisible(false)}>Cancel</Modal.Action>
+        <Modal.Action loading={loading} onClick={onRemove}>OK</Modal.Action>
+      </Modal>
     </Layout>
   )
 }

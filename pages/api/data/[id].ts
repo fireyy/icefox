@@ -54,7 +54,7 @@ async function handlePUT(id: number, data: any, res: NextApiResponse) {
 
 // DELETE /api/data/:id
 async function handleDELETE(id: number, res: NextApiResponse) {
-  const result = await prisma.key.findUnique({
+  const result = await prisma.key.delete({
     where: { id },
   })
   res.json(result)
