@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
-import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts, Spacer } from '@geist-ui/core'
+import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts, Spacer, Select } from '@geist-ui/core'
 import Plus from '@geist-ui/icons/plus'
 import UploadCloud from '@geist-ui/icons/uploadCloud'
 import Layout from 'components/layout'
@@ -16,9 +16,12 @@ const Data: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(0)
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
+  const { setVisible: setPublishModalVisible, bindings: publishBindings } = useModal()
+  const [publishPaths, setPublishPaths] = useState<string[]>([])
   const domain = router.query.domain
 
   const { data, error, mutate } = useSWR(`/api/${domain}/data`)
+  const { data: squashList } = useSWR(`/api/${domain}/squash`)
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -79,6 +82,33 @@ const Data: NextPage = () => {
     )
   }
 
+  const handlePublishSelect = (p: string | string[]) => {
+    const paths = Array.isArray(p) ? p : [p]
+    setPublishPaths(paths)
+  }
+
+  const handlePublish = async () => {
+    setPublishPaths(squashList.map((t: any) => t.path))
+    setPublishModalVisible(true)
+  }
+
+  const onPublish = async () => {
+    setLoading(true)
+    const res = await fetch(`/api/${domain}/publish`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(publishPaths),
+    })
+    if (res) {
+      setToast({
+        text: 'Publish data Successfully.',
+        type: 'success',
+      })
+      setPublishModalVisible(false)
+    }
+    setLoading(false)
+  }
+
   return (
     <Layout title="Data">
       <Grid.Container gap={2} justify="flex-start">
@@ -90,7 +120,7 @@ const Data: NextPage = () => {
           <Input placeholder='value filter' />
         </Grid>
         <Grid md={12} justify="flex-end">
-          <Button auto type="success" icon={<UploadCloud />} scale={2/3}>
+          <Button auto type="success" icon={<UploadCloud />} onClick={handlePublish} scale={2/3}>
             Publish
           </Button>
           <Spacer w={0.5} />
@@ -116,6 +146,24 @@ const Data: NextPage = () => {
         </Modal.Content>
         <Modal.Action passive onClick={() => setModalVisible(false)}>Cancel</Modal.Action>
         <Modal.Action loading={loading} onClick={onRemove}>OK</Modal.Action>
+      </Modal>
+      <Modal {...publishBindings}>
+        <Modal.Title>Confirm to Publish</Modal.Title>
+        <Modal.Content>
+          {
+            squashList && (
+              <Select placeholder="Paths" multiple width="100%" value={publishPaths} onChange={handlePublishSelect}>
+                {
+                  squashList.map((item: any) => (
+                    <Select.Option key={item.path} value={item.path}>{item.path}</Select.Option>
+                  ))
+                }
+              </Select>
+            )
+          }
+        </Modal.Content>
+        <Modal.Action passive onClick={() => setPublishModalVisible(false)}>Cancel</Modal.Action>
+        <Modal.Action loading={loading} onClick={onPublish}>Publish</Modal.Action>
       </Modal>
     </Layout>
   )

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -61,6 +62,7 @@ model publishlog {
   updatedAt     DateTime  @updatedAt @map(name: "updated_at")
   user      User   @relation(fields: [createBy], references: [id])
   createBy    Int    @map("create_by")
+  publishdatas publishdata[]
   @@index([domain], name: "publishlog_domain_index")
   @@index([createBy], name: "publishlog_create_by_index")
   @@index([createdAt], name: "publishlog_created_at_index")
@@ -71,6 +73,7 @@ model publishlog {
 model publishdata {
   id        Int     @id @default(autoincrement())
   publishId    Int @map(name: "publish_id")
+  publishlog  publishlog @relation(fields: [publishId], references: [id])
   path      String @db.VarChar(64)
   name      String @db.VarChar(64)
   value     String @db.VarChar(10240)

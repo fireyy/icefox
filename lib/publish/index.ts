@@ -1,9 +1,16 @@
-const provider = process.env.STORAGE_PROVIDER
-let uploadProvide = import(`./providers/${provider}`)
+import local from './providers/local'
+import qiniu from './providers/qiniu'
+
+const providers = {
+  local,
+  qiniu,
+} as any
+
+const provider = providers[process.env.STORAGE_PROVIDER || 'local']
 
 const publish = {
-  push (domain: string, list: any) { //TODO: list type
-    return uploadProvide.then(m => m.put())
+  push (domain: string, list: any, mime: string) { //TODO: list type
+    return provider.put(domain, list, mime)
   }
 }
 

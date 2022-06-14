@@ -31,3 +31,12 @@ export type DataItem = {
 }
 
 export type DataItems = Array<DataItem>
+
+export type SquashItem = {
+  path: string
+  value: any
+  updatedAt: string
+  publishAt: string
+}
+
+export type SquashItems = Array<SquashItem>

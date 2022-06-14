@@ -26,7 +26,7 @@ const Changelog: NextPage = () => {
   }
 
   const onReuse = async () => {
-    setModalVisible(false)
+    setLoading(true)
     const res = await fetch(`/api/data/${keyId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -36,10 +36,12 @@ const Changelog: NextPage = () => {
     })
     const result = await res.json()
     if (result.id) {
+      setModalVisible(false)
       setToast({
         text: 'Updated data Successfully.',
         type: 'success',
       })
+      setLoading(false)
       mutate()
     }
   }

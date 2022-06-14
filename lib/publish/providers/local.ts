@@ -8,7 +8,7 @@ const { serverRuntimeConfig: { uploadDir } } = getConfig()
 const local = {
   provider: 'local',
   name: 'Local Storage',
-  put (key:string, data:string) {
+  put (key:string, data:string, mime: string) {
     const filePath = path.join(uploadDir, key) + '.icefox'
     const parentPath = path.dirname(filePath)
     return new Promise((resolve, reject) => {
