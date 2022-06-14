@@ -1,7 +1,7 @@
 export type Seed = {
   name: string
-  url: string
-  icon: string
+  comment: string
+  value: string
   group?: string
 }
 

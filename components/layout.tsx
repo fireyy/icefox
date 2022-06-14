@@ -18,6 +18,7 @@ export default function Layout({ title, children }: LayoutProps) {
   const router = useRouter()
   const theme = useTheme()
   const isFront = router.pathname.startsWith('/sign-in')
+  const isOverview = router.pathname === '/'
 
   const session = useRequireAuth()
   if (!isFront && !session) return <LoadingDots />
@@ -36,11 +37,14 @@ export default function Layout({ title, children }: LayoutProps) {
         )
       }
       <div className="layout">
-        {children}
+        <div className="wrapper">{children}</div>
       </div>
       <style jsx>{`
         .layout {
           min-height: ${ isFront ? '100vh' : 'calc(100vh - var(--geist-page-nav-height))'};
+          background-color: ${ isOverview ? 'var(--accent-1)' : 'var(--geist-background)'};
+        }
+        .wrapper {
           max-width: ${theme.layout.pageWidthWithMargin};
           margin: 0 auto;
           padding: ${theme.layout.gap};

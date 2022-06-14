@@ -88,7 +88,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           }
           #__next {
             overflow: visible !important;
-            background-color: var(--accent-1);
           }
           #nprogress {
             pointer-events:none;

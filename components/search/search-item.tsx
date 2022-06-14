@@ -1,7 +1,6 @@
 import React, { MouseEvent, FocusEvent } from 'react'
 import { SearchResults } from './helper'
-import { Text, useTheme, Image } from '@geist-ui/core'
-import { staticPath } from 'lib/contants'
+import { Text, useTheme } from '@geist-ui/core'
 
 export type SearchItemProps = {
   data: SearchResults[number]
@@ -20,7 +19,7 @@ const SearchItem: React.FC<SearchItemProps> = ({
 }) => {
   const theme = useTheme()
   const selectHandler = () => {
-    onSelect(data.url)
+    onSelect('/data')
   }
 
   return (
@@ -32,9 +31,8 @@ const SearchItem: React.FC<SearchItemProps> = ({
         onFocus={onFocus}
         onBlur={onBlur}
         data-search-item>
-        <Image width="16px" height="16px" src={`${staticPath}${data.icon}`} alt="" />
-        <Text pl="12px" font="14px" className="value" span>
-          {data.name}
+        <Text font="14px" className="value" span>
+          {data.name}:{data.value} - {data.comment}
         </Text>
         <style jsx>{`
           .container {

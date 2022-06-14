@@ -54,7 +54,7 @@ const Search: React.FC<unknown> = () => {
     const timer = setTimeout(() => {
       ref.current?.focus()
       window.clearTimeout(timer)
-    }, 0)
+    }, 100)
   }, [KeyMod.CtrlCmd, KeyCode.KEY_K])
 
   useEffect(

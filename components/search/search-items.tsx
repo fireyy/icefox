@@ -35,6 +35,7 @@ const SearchItems = React.forwardRef<
     const { rect, setRect } = useRect()
     const ref = useRef<HTMLUListElement | null>(null)
     const [displayHighlight, setDisplayHighlight] = useState<boolean>(false)
+    // FIXME: type HTMLUListElement
     useImperativeHandle(outRef, () =>
       Object.assign(ref.current, {
         closeHighlight: () => setDisplayHighlight(false),
@@ -76,7 +77,7 @@ const SearchItems = React.forwardRef<
                   onFocus={focusHandler}
                   onBlur={blurHandler}
                   data={item}
-                  key={item.url}
+                  key={item.group+item.name}
                 />
               ))}
             </ul>
