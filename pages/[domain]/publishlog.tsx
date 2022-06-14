@@ -12,11 +12,11 @@ const Publishlog: NextPage = () => {
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [publishdata, setPublishdata] = useState([])
 
-  const { data } = useSWR(`/api/${domain}/publishlog`)
+  const { data } = useSWR(`/api/publishlog/${domain}`)
 
   const handleDetail = async (id: number) => {
     setDrawerVisible(true)
-    const res = await fetch(`/api/publishlog/${id}/publishdata`, {
+    const res = await fetch(`/api/publishdata/${id}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     })

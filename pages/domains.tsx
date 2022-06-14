@@ -38,7 +38,7 @@ const Domains: NextPage = () => {
   })
 
   const removeDomain = async (domain: string) => {
-    const res = await fetch(`/api/${domain}`, {
+    const res = await fetch(`/api/domains/${domain}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
     })

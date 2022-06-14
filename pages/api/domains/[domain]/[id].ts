@@ -35,7 +35,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 }
 
-// GET /api/data/:id
+// GET /api/domains/:domain/:id
 async function handleGET(id: number, res: NextApiResponse) {
   const result = await prisma.key.findUnique({
     where: { id },
@@ -43,7 +43,7 @@ async function handleGET(id: number, res: NextApiResponse) {
   res.json(result)
 }
 
-// PATCH /api/data/:id
+// PATCH /api/domains/:domain/:id
 async function handlePATCH(id: number, data: any, userId: number, res: NextApiResponse) {
   const key = await prisma.key.findFirst({
     where: { id, isDelete: 0 },
@@ -73,7 +73,7 @@ async function handlePATCH(id: number, data: any, userId: number, res: NextApiRe
   res.json(result)
 }
 
-// DELETE /api/data/:id
+// DELETE /api/domains/:domain/:id
 async function handleDELETE(id: number, res: NextApiResponse) {
   const result = await prisma.key.update({
     where: { id },

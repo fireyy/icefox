@@ -18,7 +18,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope }) => {
   const domain = scope
 
   const handleSelect = async (domain: string) => {
-    const res = await fetch(`/api/${domain}`, {
+    const res = await fetch(`/api/domains/${domain}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     })

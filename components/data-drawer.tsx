@@ -31,7 +31,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
   const watchType = watch('type', 1)
   const watchValue = watch('value')
 
-  const { data, error, mutate } = useSWR(item !== 0 && `/api/data/${item}`)
+  const { data, error, mutate } = useSWR(item !== 0 && `/api/domains/${domain}/${item}`)
 
   useEffect(() => {
     if (data) {
@@ -54,7 +54,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
       data.value = 'false'
     }
     setLoading(true)
-    let url = isEdit ? `/api/data/${item}` : `/api/${domain}/data`
+    let url = isEdit ? `/api/domains/${domain}/${item}` : `/api/domains/${domain}`
     const res = await fetch(url, {
       method: isEdit ? 'PATCH' : 'PUT',
       headers: { 'Content-Type': 'application/json' },

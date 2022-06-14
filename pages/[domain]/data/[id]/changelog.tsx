@@ -17,8 +17,8 @@ const Changelog: NextPage = () => {
   const [value, setValue] = useState('')
   const [pageIndex, setPageIndex] = useState(1)
 
-  const { data: keyData } = useSWR(`/api/data/${keyId}`)
-  const { data = {}, error, mutate } = useSWR(`/api/data/${keyId}/changelog?page=${pageIndex}&limit=10`)
+  const { data: keyData } = useSWR(`/api/domains/${domain}/${keyId}`)
+  const { data = {}, error, mutate } = useSWR(`/api/changelog/${keyId}?page=${pageIndex}&limit=10`)
 
   const handleReuse = async (val: string) => {
     setModalVisible(true)
@@ -27,7 +27,7 @@ const Changelog: NextPage = () => {
 
   const onReuse = async () => {
     setLoading(true)
-    const res = await fetch(`/api/data/${keyId}`, {
+    const res = await fetch(`/api/domains/${domain}/${keyId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -59,8 +59,8 @@ const Changelog: NextPage = () => {
   return (
     <Layout title="Change Log">
       <Breadcrumbs mb={1}>
-        <Breadcrumbs.Item href="/data"><ArrowLeft /></Breadcrumbs.Item>
-        <Breadcrumbs.Item>{domain}/{keyData?.path}:{keyData?.name}</Breadcrumbs.Item>
+        <Breadcrumbs.Item onClick={() => router.back()}><ArrowLeft /></Breadcrumbs.Item>
+        <Breadcrumbs.Item>{domain}{keyData?.path}:{keyData?.name}</Breadcrumbs.Item>
       </Breadcrumbs>
       <Grid.Container gap={2} justify="flex-start">
         <Grid md={24}>

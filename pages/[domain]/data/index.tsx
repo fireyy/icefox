@@ -20,8 +20,8 @@ const Data: NextPage = () => {
   const [publishPaths, setPublishPaths] = useState<string[]>([])
   const domain = router.query.domain
 
-  const { data, error, mutate } = useSWR(`/api/${domain}/data`)
-  const { data: squashList } = useSWR(`/api/${domain}/squash`)
+  const { data, error, mutate } = useSWR(`/api/key/${domain}`)
+  const { data: squashList } = useSWR(`/api/squash/${domain}`)
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -54,7 +54,7 @@ const Data: NextPage = () => {
 
   const onRemove = async () => {
     setLoading(true)
-    const res = await fetch(`/api/data/${current}`, {
+    const res = await fetch(`/api/domains/${domain}/${current}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -94,7 +94,7 @@ const Data: NextPage = () => {
 
   const onPublish = async () => {
     setLoading(true)
-    const res = await fetch(`/api/${domain}/publish`, {
+    const res = await fetch(`/api/publish/${domain}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(publishPaths),

@@ -10,7 +10,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   const session = await roleProtect(req, res)
 
-  const id = Number(query.id)
+  const keyId = Number(query.keyId)
   const { page, limit } = query
 
   if (session) {
@@ -18,10 +18,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       case 'GET':
         const result = await prisma.$transaction([
           prisma.changelog.count({
-            where: { keyId: id },
+            where: { keyId },
           }),
           prisma.changelog.findMany({
-            where: { keyId: id },
+            where: { keyId },
             take: +limit,
             skip: (+page - 1) * +limit,
             include: {

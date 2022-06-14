@@ -5,15 +5,18 @@ import roleProtect from 'lib/role-protect'
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
     query: { domain },
+    body: data,
     method,
   } = req
 
   const session = await roleProtect(req, res)
 
+  const d = domain as string
+
   if (session) {
     switch (method) {
       case 'GET':
-        await handleGET(domain as string, res)
+        await handleGET(d, res)
         break
       default:
         res.setHeader('Allow', ['GET'])
@@ -24,22 +27,10 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 }
 
-// GET /api/:domain/publishlog
+// GET /api/key/:domain
 async function handleGET(domain: string, res: NextApiResponse) {
-  const result = await prisma.publishlog.findMany({
-    where: { domain },
-    include: {
-      user: {
-        select: {
-          name: true,
-          email: true,
-        }
-      }
-    }
+  const result = await prisma.key.findMany({
+    where: { domain, isDelete: 0 },
   })
-  if (result) {
-    res.json(result)
-  } else {
-    res.json([])
-  }
+  res.json(result)
 }

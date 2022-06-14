@@ -5,23 +5,31 @@ import { setScopeCookie } from 'lib/cookies'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
-    query: { domain },
+    query: { domain: d },
     body: data,
     method,
   } = req
 
   const session = await roleProtect(req, res)
+  const domain = d as string
 
   if (session) {
     switch (method) {
       case 'GET':
-        await handleGET(domain as string, res)
+        await handleGET(domain, res)
+        break
+      case 'PUT':
+        await handlePUT({
+          ...data,
+          domain,
+          createBy: session.user.id,
+        }, res)
         break
       case 'DELETE':
-        await handleDELETE(domain as string, res)
+        await handleDELETE(domain, res)
         break
       default:
-        res.setHeader('Allow', ['GET', 'DELETE'])
+        res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
         res.status(405).end(`Method ${method} Not Allowed`)
     }
   } else {
@@ -29,7 +37,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   }
 }
 
-// GET /api/:domain
+// GET /api/domains/:domain
 async function handleGET(domain: string, res: NextApiResponse) {
   const result = await prisma.domain.findUnique({
     where: { domain },
@@ -42,7 +50,29 @@ async function handleGET(domain: string, res: NextApiResponse) {
   }
 }
 
-// DELETE /api/:domain
+// PUT /api/domains/:domain
+async function handlePUT(data: any, res: NextApiResponse) {
+  const result = await prisma.key.create({
+    data: { ...data },
+    select: {
+      id: true,
+      value: true,
+      createBy: true
+    }
+  })
+  if (result.id) {
+    await prisma.changelog.create({
+      data: {
+        keyId: result.id,
+        value: result.value,
+        createBy: result.createBy,
+      },
+    })
+  }
+  res.json(result)
+}
+
+// DELETE /api/domains/:domain
 async function handleDELETE(domain: string, res: NextApiResponse) {
   const hasKey = await prisma.key.findFirst({
     where: { domain },
