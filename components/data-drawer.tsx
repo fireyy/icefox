@@ -21,6 +21,10 @@ type FormData = {
   comment: string
 }
 
+type InputTypes = {
+  type: 'default' | 'secondary' | 'success' | 'warning' | 'error'
+}
+
 const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate }) => {
   const { register, setValue, getValues, handleSubmit, watch, reset: resetData, formState: { errors } } = useForm<FormData>()
   const [loading, setLoading] = useState(false)
@@ -30,6 +34,14 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
   const domain = router.query.domain
   const watchType = watch('type', 1)
   const watchValue = watch('value')
+  const registerValue = {
+    ...{
+      type: errors.value?.type === 'required' ? 'error': 'default',
+    } as InputTypes,
+    ...register('value', {
+      required: true,
+    })
+  }
 
   const { data, error, mutate } = useSWR(item !== 0 && `/api/domains/${domain}/${item}`)
 
@@ -93,12 +105,19 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
           <form className="data-drawer" onSubmit={onSubmit}>
             <Grid.Container gap={2} justify="center">
               <Grid xs={24} direction="column">
-                <Text h6>Path</Text>
-                <Input placeholder="Text" width="100%" {...register('path')} readOnly={isEdit} disabled={isEdit} />
+                <Text h6>Path <Text span type="error">{errors.path?.message}</Text></Text>
+                <Input type={errors.path?.type ? 'error': 'default'} placeholder="Text" width="100%"
+                  {...register('path', {
+                    required: 'Path is required',
+                    pattern: {
+                      value: /^\/([A-z0-9-_+]+\/)*([A-z0-9]+)$/,
+                      message: 'Path muse start with /'
+                    }
+                  })} readOnly={isEdit} disabled={isEdit} />
               </Grid>
               <Grid xs={24} direction="column">
-                <Text h6>Name</Text>
-                <Input placeholder="Text" width="100%" {...register('name')} readOnly={isEdit} disabled={isEdit} />
+                <Text h6>Name <Text span type="error">{errors.name?.type === 'required' && 'is required'}</Text></Text>
+                <Input type={errors.name?.type === 'required' ? 'error': 'default'} placeholder="Text" width="100%" {...register('name', { required: true })} readOnly={isEdit} disabled={isEdit} />
               </Grid>
               <Grid xs={24} direction="column">
                 <Text h6>Type</Text>
@@ -111,24 +130,24 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
                 </Select>
               </Grid>
               <Grid xs={24} direction="column">
-                <Text h6>Value</Text>
+                <Text h6>Value <Text span type="error">{errors.value?.type === 'required' && 'is required'}</Text></Text>
                 {
-                  watchType === 1 && <Input placeholder="Text" width="100%" {...register('value')} />
+                  watchType === 1 && <Input placeholder="Text" width="100%" {...registerValue} />
                 }
                 {
-                  (watchType === 2 || watchType === 9) && <Textarea placeholder="Text" width="100%" {...register('value')} />
+                  (watchType === 2 || watchType === 9) && <Textarea placeholder="Text" width="100%" {...registerValue} />
                 }
                 {
-                  watchType === 3 && <Input placeholder="Number" htmlType="number" {...register('value')} />
+                  watchType === 3 && <Input placeholder="Number" htmlType="number" {...registerValue} />
                 }
                 {
                   watchType === 4 && <Toggle checked={watchValue === '' || watchValue === 'false' ? false : true} onChange={(e) => setValue('value', `${e.target.checked}`)} />
                 }
                 {
-                  watchType === 5 && <Input placeholder="Number" max={100} min={0} htmlType="number" {...register('value')} />
+                  watchType === 5 && <Input placeholder="Number" max={100} min={0} htmlType="number" {...registerValue} />
                 }
                 {
-                  watchType === 6 && <Input htmlType="date" {...register('value')} />
+                  watchType === 6 && <Input htmlType="date" {...registerValue} />
                 }
               </Grid>
               <Grid xs={24} direction="column">
