@@ -40,3 +40,14 @@ export type SquashItem = {
 }
 
 export type SquashItems = Array<SquashItem>
+
+export type DomainItem = {
+  id: number
+  domain: string
+  createBy: number
+  createdAt: string
+  updatedAt: string
+  user?: User
+}
+
+export type DomainItems = Array<DomainItem>
