@@ -13,27 +13,23 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   const session = await roleProtect(req, res)
   const domain = d as string
 
-  if (session) {
-    switch (method) {
-      case 'GET':
-        await handleGET(domain, res)
-        break
-      case 'PUT':
-        await handlePUT({
-          ...data,
-          domain,
-          createBy: session.user.id,
-        }, res)
-        break
-      case 'DELETE':
-        await handleDELETE(domain, res)
-        break
-      default:
-        res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-    }
-  } else {
-    res.status(401).send({ message: 'Unauthorized' })
+  switch (method) {
+    case 'GET':
+      await handleGET(domain, res)
+      break
+    case 'PUT':
+      await handlePUT({
+        ...data,
+        domain,
+        createBy: session?.user?.id,
+      }, res)
+      break
+    case 'DELETE':
+      await handleDELETE(domain, res)
+      break
+    default:
+      res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 

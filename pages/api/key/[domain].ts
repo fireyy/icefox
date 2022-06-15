@@ -13,17 +13,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   const d = domain as string
 
-  if (session) {
-    switch (method) {
-      case 'GET':
-        await handleGET(d, res)
-        break
-      default:
-        res.setHeader('Allow', ['GET'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-    }
-  } else {
-    res.status(401).send({ message: 'Unauthorized' })
+  switch (method) {
+    case 'GET':
+      await handleGET(d, res)
+      break
+    default:
+      res.setHeader('Allow', ['GET'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 

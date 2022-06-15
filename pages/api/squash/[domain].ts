@@ -12,17 +12,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   const session = await roleProtect(req, res)
 
-  if (session) {
-    switch (method) {
-      case 'GET':
-        await handleGET(domain as string, res)
-        break
-      default:
-        res.setHeader('Allow', ['GET'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-    }
-  } else {
-    res.status(401).send({ message: 'Unauthorized' })
+  switch (method) {
+    case 'GET':
+      await handleGET(domain as string, res)
+      break
+    default:
+      res.setHeader('Allow', ['GET'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 

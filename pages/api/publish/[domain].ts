@@ -28,50 +28,46 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
   const session = await roleProtect(req, res)
   const domain = d as string
 
-  if (session) {
-    switch (method) {
-      case 'PUT':
-        const where = {
-          AND: [
-            { domain },
-            { isDelete: 0 },
-            { path: { in: data } }
-          ],
-        }
-        const result = await prisma.key.findMany({
+  switch (method) {
+    case 'PUT':
+      const where = {
+        AND: [
+          { domain },
+          { isDelete: 0 },
+          { path: { in: data } }
+        ],
+      }
+      const result = await prisma.key.findMany({
+        where,
+      })
+      const list = await prisma.$transaction(async (prisma) => {
+        let res = await pushToCDN(domain, squash(result))
+        await prisma.key.updateMany({
           where,
+          data: {
+            publishAt: new Date(),
+          }
         })
-        const list = await prisma.$transaction(async (prisma) => {
-          let res = await pushToCDN(domain, squash(result))
-          await prisma.key.updateMany({
-            where,
-            data: {
-              publishAt: new Date(),
-            }
-          })
-          return res
+        return res
+      })
+      // Save to publishlog, Ignore publishing error
+      await prisma.$transaction(async (prisma) => {
+        const { id: publishId } = await prisma.publishlog.create({
+          data: {
+            domain,
+            createBy: 1,
+          }
         })
-        // Save to publishlog, Ignore publishing error
-        await prisma.$transaction(async (prisma) => {
-          const { id: publishId } = await prisma.publishlog.create({
-            data: {
-              domain,
-              createBy: 1,
-            }
-          })
-          const publishedData: Pargs[] = result.map(({ path, name, value }: any) => ({ publishId, path, name, value }))
-          return await prisma.publishdata.createMany({
-            data: publishedData
-          })
+        const publishedData: Pargs[] = result.map(({ path, name, value }: any) => ({ publishId, path, name, value }))
+        return await prisma.publishdata.createMany({
+          data: publishedData
         })
-        res.json(list)
-        break
-      default:
-        res.setHeader('Allow', ['PUT'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-    }
-  } else {
-    res.status(401).send({ message: 'Unauthorized' })
+      })
+      res.json(list)
+      break
+    default:
+      res.setHeader('Allow', ['PUT'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 

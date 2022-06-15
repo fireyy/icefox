@@ -13,25 +13,21 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 
   const id = Number(query.id)
 
-  if (session) {
-    switch (method) {
-      case 'GET':
-        await handleGET(id, res)
-        break
-      case 'PATCH':
-        await handlePATCH(id, {
-          ...data
-        }, Number(session.user.id), res)
-        break
-      case 'DELETE':
-        await handleDELETE(id, res)
-        break
-      default:
-        res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
-        res.status(405).end(`Method ${method} Not Allowed`)
-    }
-  } else {
-    res.status(401).send({ message: 'Unauthorized' })
+  switch (method) {
+    case 'GET':
+      await handleGET(id, res)
+      break
+    case 'PATCH':
+      await handlePATCH(id, {
+        ...data
+      }, Number(session?.user?.id), res)
+      break
+    case 'DELETE':
+      await handleDELETE(id, res)
+      break
+    default:
+      res.setHeader('Allow', ['GET', 'PATCH', 'DELETE'])
+      res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 

@@ -4,25 +4,34 @@ import roleProtect from 'lib/role-protect'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
-    query: { domain },
+    query: { domain: d },
+    body: data,
     method,
   } = req
 
   const session = await roleProtect(req, res)
+  const domain = d as string
 
   switch (method) {
     case 'GET':
-      await handleGET(domain as string, res)
+      await handleGET(domain, res)
+      break
+    case 'PUT':
+      await handlePUT({
+        ...data,
+        domain,
+        createBy: session?.user?.id,
+      }, res)
       break
     default:
-      res.setHeader('Allow', ['GET'])
+      res.setHeader('Allow', ['GET', 'PUT'])
       res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 
-// GET /api/publishlog/:domain
+// GET /api/privilege/:domain
 async function handleGET(domain: string, res: NextApiResponse) {
-  const result = await prisma.publishlog.findMany({
+  const result = await prisma.privilege.findMany({
     where: { domain },
     include: {
       user: {
@@ -33,9 +42,13 @@ async function handleGET(domain: string, res: NextApiResponse) {
       }
     }
   })
-  if (result) {
-    res.json(result)
-  } else {
-    res.json([])
-  }
+  res.json(result || [])
+}
+
+// PUT /api/privilege/:domain
+async function handlePUT(data: any, res: NextApiResponse) {
+  const result = await prisma.privilege.create({
+    data,
+  })
+  res.json(result)
 }

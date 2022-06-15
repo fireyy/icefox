@@ -4,30 +4,30 @@ import roleProtect from 'lib/role-protect'
 
 export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const {
-    query: { id },
+    query,
+    body: data,
     method,
   } = req
 
   const session = await roleProtect(req, res)
 
+  const id = Number(query.id)
+
   switch (method) {
-    case 'GET':
-      await handleGET(Number(id), res)
+    case 'DELETE':
+      await handleDELETE(id, res)
       break
     default:
-      res.setHeader('Allow', ['GET'])
+      res.setHeader('Allow', ['DELETE'])
       res.status(405).end(`Method ${method} Not Allowed`)
   }
 }
 
-// GET /api/publishlog/:id/publishdata
-async function handleGET(id: number, res: NextApiResponse) {
-  const result = await prisma.publishdata.findMany({
-    where: { publishId: id },
+// DELETE /api/privilege/:domain/:id
+async function handleDELETE(id: number, res: NextApiResponse) {
+  const result = await prisma.privilege.delete({
+    where: { id },
   })
-  if (result) {
-    res.json(result)
-  } else {
-    res.json([])
-  }
+  res.json(result)
 }
+
