@@ -5,12 +5,14 @@ const prisma = new PrismaClient()
 const userData: Prisma.UserCreateInput[] = [
   {
     name: 'admin',
-    email: 'admin@fireyy.com',
+    email: 'admin@domain.com',
+    image: 'https://i.pravatar.cc/150?u=admin@domain.com',
     role: 'ADMIN',
   },
   {
-    name: 'fireyy',
-    email: 'fireyy@fireyy.com',
+    name: 'user',
+    email: 'user@domain.com',
+    image: 'https://i.pravatar.cc/150?u=user@domain.com',
     role: 'USER',
   },
 ]

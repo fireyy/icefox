@@ -4,27 +4,52 @@ import type {
 } from 'next'
 import { getServerSession } from 'next-auth/next'
 import { getProviders, signIn } from 'next-auth/react'
-import { Button, Avatar, Card } from '@geist-ui/core'
+import { Button, Image, Card, Divider } from '@geist-ui/core'
 import { authOptions } from 'lib/auth'
 import Layout from 'components/layout'
 
 const SignIn = ({
   providers,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const handleClick = (username: string) => {
+    signIn("credentials", { username })
+  }
+
   return (
     <>
       <Layout title='Sign In'>
         <div className="sign-in">
-          <Avatar src="/icefox.svg" width={5} height={5} mb={0.5} />
-          <Card width={20}>
+          <Image src="/icefox.svg" width="142px" height="140px" mb={0.5} alt="" />
+          <Card>
             {Object.values(providers!).map((provider) => (
               <div key={provider.name}>
-                <Button
-                  className="!h-12 !px-5 !text-lg"
-                  onClick={() => signIn(provider.id)}
-                >
-                  Sign in with {provider.name}
-                </Button>
+                {
+                  provider.name !== 'devAuth' && <Button
+                    className="!h-12 !px-5 !text-lg"
+                    onClick={() => signIn(provider.id)}
+                  >
+                    Sign in with {provider.name}
+                  </Button>
+                }
+                {
+                  process.env.NODE_ENV === 'development' && provider.name === 'devAuth' && (
+                    <>
+                      <Divider>OR</Divider>
+                      <Button
+                        className="!h-12 !px-5 !text-lg"
+                        onClick={() => handleClick('admin')}
+                      >
+                        Sign in with Admin
+                      </Button>
+                      <Button
+                        className="!h-12 !px-5 !text-lg"
+                        onClick={() => handleClick('user')}
+                      >
+                        Sign in with User
+                      </Button>
+                    </>
+                  )
+                }
               </div>
             ))}
           </Card>
