@@ -32,5 +32,9 @@ async function handleGET(domain: string, res: NextApiResponse) {
   const result = await prisma.key.findMany({
     where: { domain, isDelete: 0 },
   })
-  res.json(result)
+  if (result) {
+    res.json(result)
+  } else {
+    res.json([])
+  }
 }

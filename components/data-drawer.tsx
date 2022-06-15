@@ -99,11 +99,11 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
 
   return (
     <>
-      <Drawer visible={visible} onClose={handleDrawerClose} placement="right">
-        <Drawer.Subtitle>Add new key to {domain}</Drawer.Subtitle>
-        <Drawer.Content>
-          <form className="data-drawer" onSubmit={onSubmit}>
-            <Grid.Container gap={2} justify="center">
+      <Drawer visible={visible} onClose={handleDrawerClose} placement="right" wrapClassName="data-drawer">
+        <Drawer.Subtitle>{isEdit ? `edit key in ${domain}` : `Add new key in ${domain}`}</Drawer.Subtitle>
+        <Drawer.Content className="data-drawer-content">
+          <form onSubmit={onSubmit}>
+            <Grid.Container gap={2} justify="center" className="data-drawer-grid">
               <Grid xs={24} direction="column">
                 <Text h6>Path <Text span type="error">{errors.path?.message}</Text></Text>
                 <Input type={errors.path?.type ? 'error': 'default'} placeholder="Text" width="100%"
@@ -154,17 +154,25 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
                 <Text h6>Comment</Text>
                 <Input placeholder="Text" width="100%" {...register('comment')} />
               </Grid>
-              <Grid justify="flex-end">
+              <Grid justify="flex-end" className="data-drawer-actions">
                 <Button type="secondary" htmlType="submit" loading={loading}>Save</Button>
               </Grid>
             </Grid.Container>
           </form>
         </Drawer.Content>
       </Drawer>
-      <style jsx>{`
-        .data-drawer {
-          width: 350px;
+      <style jsx global>{`
+        .data-drawer-content {
           overflow: auto;
+        }
+        .data-drawer-content .data-drawer-grid {
+          width: 350px;
+          position: relative;
+          padding-bottom: 40px;
+        }
+        .data-drawer-actions {
+          position: fixed;
+          bottom: 10px;
         }
       `}</style>
     </>

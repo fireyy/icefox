@@ -67,6 +67,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             --body-color: ${lightPalette?.accents_4};
             --geist-foreground: ${lightPalette?.foreground};
             --geist-background: ${lightPalette?.background};
+            --geist-radius: 5px;
           }
           [data-theme='dark'] {
             --accent-1: ${darkPalette?.accents_1};

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
-import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts, Spacer, Select } from '@geist-ui/core'
+import { Button, Grid, Text, Input, useInput, Table, useModal, Modal, useToasts, Spacer, Select } from '@geist-ui/core'
 import Plus from '@geist-ui/icons/plus'
 import UploadCloud from '@geist-ui/icons/uploadCloud'
 import Layout from 'components/layout'
@@ -8,6 +8,12 @@ import { useRouter } from 'next/router'
 import DataDrawer from 'components/data-drawer'
 import useSWR from 'swr'
 import { DataItem, DataItems } from 'lib/interfaces'
+import InputFilter from 'components/input-filter'
+
+type FilterItem = {
+  name: string
+  value: string
+}
 
 const Data: NextPage = () => {
   const router = useRouter()
@@ -18,10 +24,24 @@ const Data: NextPage = () => {
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const { setVisible: setPublishModalVisible, bindings: publishBindings } = useModal()
   const [publishPaths, setPublishPaths] = useState<string[]>([])
+  const [filters, setFilters] = useState<FilterItem[]>([])
+  const [keyData, setKeyData] = useState<DataItems[]>([])
   const domain = router.query.domain
 
   const { data, error, mutate } = useSWR(`/api/key/${domain}`)
   const { data: squashList } = useSWR(`/api/squash/${domain}`)
+
+  useEffect(() => {
+    if (data && filters && filters.length > 0) {
+      const filterResult = data.filter((item: DataItem) => {
+        return filters.every((f: FilterItem) => String(item[f.name as keyof DataItem]).toLowerCase().includes(f.value.toLowerCase()))
+      })
+      setKeyData(filterResult)
+    } else if (filters.length === 0) {
+      // reset
+      setKeyData(data)
+    }
+  }, [data, filters])
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -109,15 +129,29 @@ const Data: NextPage = () => {
     setLoading(false)
   }
 
+  const handleFilterChange = (name: string, value: string, callback = () => {}) => {
+    if (data && data.length > 0) {
+      if (value) {
+        setFilters([...filters, {
+          name,
+          value
+        }])
+      } else {
+        setFilters([...filters.filter((item: FilterItem) => item.name !== name)])
+      }
+      callback && callback()
+    }
+  }
+
   return (
     <Layout title="Data">
       <Grid.Container gap={2} justify="flex-start">
         <Grid md={12}>
-          <Input placeholder='path filter' />
+          <InputFilter name="path" onChange={handleFilterChange} />
           <Spacer w={0.5} />
-          <Input placeholder='name filter' />
+          <InputFilter name="name" onChange={handleFilterChange} />
           <Spacer w={0.5} />
-          <Input placeholder='value filter' />
+          <InputFilter name="value" onChange={handleFilterChange} />
         </Grid>
         <Grid md={12} justify="flex-end">
           <Button auto type="success" icon={<UploadCloud />} onClick={handlePublish} scale={2/3}>
@@ -129,7 +163,7 @@ const Data: NextPage = () => {
           </Button>
         </Grid>
         <Grid md={24}>
-          <Table data={data}>
+          <Table data={keyData} emptyText="No Data to show">
             <Table.Column prop="path" label="path" />
             <Table.Column prop="name" label="name" />
             <Table.Column prop="value" label="value" />
@@ -151,7 +185,7 @@ const Data: NextPage = () => {
         <Modal.Title>Confirm to Publish</Modal.Title>
         <Modal.Content>
           {
-            squashList && (
+            squashList && squashList.length > 0 && (
               <Select placeholder="Paths" multiple width="100%" value={publishPaths} onChange={handlePublishSelect}>
                 {
                   squashList.map((item: any) => (
@@ -159,6 +193,11 @@ const Data: NextPage = () => {
                   ))
                 }
               </Select>
+            )
+          }
+          {
+            (!squashList || squashList.length === 0) && (
+              <Text>No paths to publish</Text>
             )
           }
         </Modal.Content>
