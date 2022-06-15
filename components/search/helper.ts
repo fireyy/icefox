@@ -8,8 +8,12 @@ export type SearchResultGroup = {
 }
 
 export const search = async (keyword: string): Promise<SearchResults> => {
-  const res = await fetch(`/api/search?s=${keyword}`, {
-    method: 'GET'
+  const res = await fetch(`/api/search`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      s: keyword,
+    }),
   })
   const result = await res.json()
   return result
