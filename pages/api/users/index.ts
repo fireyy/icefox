@@ -26,6 +26,7 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
         id: true,
         name: true,
         email: true,
+        image: true,
       }
     })
     res.json(result ?? [])

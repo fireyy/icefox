@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { Button, Grid, useTheme, AutoComplete, Table, useModal, Modal, useToasts } from '@geist-ui/core'
+import { Button, Grid, useTheme, AutoComplete, Table, useModal, Modal, useToasts, User as UserItem } from '@geist-ui/core'
 import Layout from 'components/layout'
 import useSWR from 'swr'
 import Plus from '@geist-ui/icons/plus'
@@ -72,7 +72,8 @@ const Privilege: NextPage = () => {
       setModalVisible(false)
       mutate()
       setToast({
-        text: 'Removed privilege Successfully'
+        text: 'Removed privilege Successfully',
+        type: 'success'
       })
     }
     setLoading(false)
@@ -92,7 +93,7 @@ const Privilege: NextPage = () => {
     if (privilege && privilege.length > 0) {
       if (value) {
         const filterResult = privilege.filter((item: any) => {
-          return String(item[name]).toLowerCase().includes(value.toLowerCase())
+          return String(item.user.name).toLowerCase().includes(value.toLowerCase())
         })
         setFilterData(filterResult)
       } else {
@@ -114,10 +115,16 @@ const Privilege: NextPage = () => {
   }
   const makeOptions = (users: User[]) => {
     return users.map(user => (
-      <AutoComplete.Option value={`${user.id}`} key={user.id}>
-        {user.name}({user.email})
+      <AutoComplete.Option value={`${user.name}`} key={user.id}>
+        <UserItem src={user.image} name={user.name} py={0.5}>
+          {user.email}
+        </UserItem>
       </AutoComplete.Option>
     ))
+  }
+  const handleAutoChange = (val: string) => {
+    const user = (allUsers || []).find(user => user.name === val)
+    setId(user?.id)
   }
   return (
     <Layout title="Privilege">
@@ -150,12 +157,13 @@ const Privilege: NextPage = () => {
         <Modal.Title>User Name</Modal.Title>
         <Modal.Content>
           <AutoComplete
+            width="100%"
             clearable
             searching={loading}
             options={users}
             placeholder="Enter user name here"
             onSearch={searchHandler}
-            onChange={(val: string) => setId(Number(val))}
+            onChange={handleAutoChange}
           />
         </Modal.Content>
         <Modal.Action passive onClick={() => setVisible(false)}>Cancel</Modal.Action>
