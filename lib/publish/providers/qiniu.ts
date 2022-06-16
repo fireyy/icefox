@@ -39,12 +39,12 @@ const provider = {
         key,
         data,
         putExtra,
-        function (respErr:any, respBody:any, respInfo:any) { //TODO: 参数类型
+        function (respErr:any, respBody:any, respInfo:any) {
           if (respErr) {
             reject(respErr)
           } else {
             if (respInfo.statusCode === 200) {
-              resolve(respBody)
+              resolve(`${QINIU_BASEURL}/${respBody.key}`)
             }
           }
         }
