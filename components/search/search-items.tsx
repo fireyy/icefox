@@ -35,9 +35,9 @@ const SearchItems = React.forwardRef<
     const { rect, setRect } = useRect()
     const ref = useRef<HTMLUListElement | null>(null)
     const [displayHighlight, setDisplayHighlight] = useState<boolean>(false)
-    // FIXME: type HTMLUListElement
+
     useImperativeHandle(outRef, () =>
-      Object.assign(ref.current, {
+      Object.assign(ref.current as HTMLUListElement, {
         closeHighlight: () => setDisplayHighlight(false),
       }),
     )
