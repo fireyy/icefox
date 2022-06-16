@@ -24,13 +24,13 @@ const Privilege: NextPage = () => {
   const { data: allUsers } = useSWR<User[]>(`/api/users`)
 
   useEffect(() => {
-    if (privilege && privilege.length > 0) {
+    if (privilege) {
       setFilterData(privilege)
     }
   }, [privilege])
 
   useEffect(() => {
-    if (allUsers && allUsers.length > 0) {
+    if (allUsers) {
       setUsers(makeOptions(allUsers))
     }
   }, [allUsers])

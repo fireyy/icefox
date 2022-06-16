@@ -23,7 +23,7 @@ const Changelog: NextPage = () => {
   const { data = {}, error, mutate } = useSWR(`/api/changelog/${keyId}?page=${pageIndex}&limit=10`)
 
   useEffect(() => {
-    if (data && data.data && data.data.length > 0) {
+    if (data && data.data) {
       setFilterData(data.data)
     }
   }, [data])

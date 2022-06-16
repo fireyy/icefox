@@ -30,11 +30,16 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
 // GET /api/domains
 async function handleGET(req:NextApiRequest, res: NextApiResponse) {
   const domain = await prisma.domain.findMany()
-  const hasScope = !!req.cookies.scope
+  let scope = req.cookies.scope
+  const hasScope = !!scope
   if (domain && domain.length > 0 && !hasScope) {
-    setScopeCookie(res, domain[0].domain)
+    scope = domain[0].domain
+    setScopeCookie(res, scope)
   }
-  res.json(domain)
+  res.json({
+    scope,
+    domain,
+  })
 }
 
 // PUT /api/domains

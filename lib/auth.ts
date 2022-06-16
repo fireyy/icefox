@@ -50,7 +50,6 @@ if (process.env.NODE_ENV === 'development') {
       }
     },
     async authorize(credentials) {
-      console.log('credentials', credentials)
       if (credentials?.username === 'admin') {
         return {
           id: 2,

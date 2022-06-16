@@ -4,7 +4,7 @@ import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import Plus from '@geist-ui/icons/plus'
 import Layout from 'components/layout'
-import { DomainItems } from 'lib/interfaces'
+import { DomainData } from 'lib/interfaces'
 import { timeAgo } from 'lib/utils'
 
 type OverviewType = {
@@ -19,7 +19,7 @@ const Home: NextPage<unknown> = () => {
   const theme = useTheme()
 
   const { data = { user: 0, key: 0, domain: 0, publish: 0 } } = useSWR<OverviewType>('/api/overview')
-  const { data: domains } = useSWR<DomainItems>(`/api/domains`)
+  const { data: domains } = useSWR<DomainData>(`/api/domains`)
 
   return (
       <>
@@ -39,7 +39,7 @@ const Home: NextPage<unknown> = () => {
         <Divider my={5} />
         <Grid.Container gap={2} marginTop={1} justify="flex-start" className="domain-overview">
           {
-            domains && domains.map((domain) => {
+            domains && domains.domain && domains.domain.map((domain) => {
               return (
                 <Grid xs={24} sm={12} md={8} key={domain.domain}>
                   <Card width="100%" onClick={() => router.push(`/${domain.domain}/data`)} className="domain-card">

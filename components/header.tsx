@@ -6,12 +6,11 @@ import { useTheme, Tabs } from '@geist-ui/core'
 import useSWR from 'swr'
 import DomainSelect from 'components/domain-select'
 import Divider from '@geist-ui/icons/divider'
-import { getCookie } from 'lib/cookies'
 
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
-  const scope = getCookie('scope')
+  const scope = ''
 
   const names = router.pathname.split('/').filter(r => !!r)
   // /[domain]/xxxxx
@@ -46,7 +45,9 @@ const Header: React.FC<unknown> = () => {
               </NextLink>
             </div>
             <Divider color={theme.palette.accents_2} />
-            <DomainSelect data={domains} scope={scope} />
+            {
+              domains && domains.scope && <DomainSelect data={domains.domain} scope={domains.scope} />
+            }
             <div className="menu">
               <Tabs
                 value={currentUrlTabValue}

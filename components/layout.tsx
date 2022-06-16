@@ -3,10 +3,8 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import type { PropsWithChildren } from 'react'
 import { useTheme } from '@geist-ui/core'
-import useRequireAuth from 'lib/use-require-auth'
 import Header from 'components/header'
 import Search from 'components/search'
-import LoadingDots from 'components/loading-dots'
 
 type WithChildren<T = {}> = T & PropsWithChildren<{}>;
 
@@ -19,9 +17,6 @@ export default function Layout({ title, children }: LayoutProps) {
   const theme = useTheme()
   const isFront = router.pathname.startsWith('/sign-in')
   const isOverview = router.pathname === '/'
-
-  const session = useRequireAuth()
-  if (!isFront && !session) return <LoadingDots />
 
   return (
     <>

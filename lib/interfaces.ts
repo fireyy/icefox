@@ -51,3 +51,8 @@ export type DomainItem = {
 }
 
 export type DomainItems = Array<DomainItem>
+
+export type DomainData = {
+  scope: string
+  domain: DomainItems
+}
