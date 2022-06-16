@@ -35,7 +35,7 @@ const Header: React.FC<unknown> = () => {
             <div className="logo">
               <NextLink href={`/`}>
                 <a aria-label="Go Home" title="IceFox">
-                  <svg aria-label="logo" height="20" viewBox="0 0 142 140" fill={theme.palette.foreground}>
+                  <svg aria-label="logo" height="20" viewBox="0 0 142 140" fill={`var(--geist-foreground)`}>
                     <path d="M25.5 9L50.1817 54.75H0.818275L25.5 9Z" />
                     <path d="M116.5 9L141.182 54.75H91.8183L116.5 9Z" />
                     <path d="M71.5 135L2.65098 58.5L140.349 58.5L71.5 135Z" />
@@ -75,11 +75,18 @@ const Header: React.FC<unknown> = () => {
         .header {
           position: fixed;
           top: 0;
+          left: 0;
+          right: 0;
           height: var(--geist-page-nav-height);
           width: 100%;
-          background-color: ${theme.palette.background};
-          box-shadow: inset 0 -1px ${theme.palette.accents_2};
+          backdrop-filter: saturate(180%) blur(5px);
+          background-color: rgba(255,255,255, 0.8);
+          box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.1);
           z-index: 999;
+        }
+        :global([data-theme='dark'] .header) {
+          background-color: rgba(0,0,0, 0.8);
+          box-shadow: 0 0 0 1px #333;
         }
         nav .content {
           display: flex;
