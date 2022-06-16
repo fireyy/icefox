@@ -10,7 +10,8 @@ import Divider from '@geist-ui/icons/divider'
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
-  const scope = ''
+
+  const { data: domains } = useSWR(`/api/domains`)
 
   const names = router.pathname.split('/').filter(r => !!r)
   // /[domain]/xxxxx
@@ -20,13 +21,11 @@ const Header: React.FC<unknown> = () => {
     (tab: string) => {
       const shouldRedirectDefaultPage = currentUrlTabValue !== tab
       if (!shouldRedirectDefaultPage) return
-      const defaultPath = `/${tab}`
+      const defaultPath = tab ? `/${domains.scope}/${tab}` : '/'
       router.push(defaultPath)
     },
-    [currentUrlTabValue],
+    [currentUrlTabValue, domains],
   )
-
-  const { data: domains } = useSWR(`/api/domains`)
 
   return (
     <>

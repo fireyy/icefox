@@ -26,7 +26,7 @@ const Domains: NextPage = () => {
   const { data: domains, error, mutate } = useSWR(`/api/domains`)
 
   useEffect(() => {
-    if (domains.domain) {
+    if (domains && domains.domain) {
       setFilterData(domains.domain)
     }
   }, [domains])
@@ -87,7 +87,7 @@ const Domains: NextPage = () => {
     )
   }
   const handleFilterChange = (name: string, value: string, callback = () => {}) => {
-    if (domains.domain && domains.domain.length > 0) {
+    if (domains && domains.domain && domains.domain.length > 0) {
       if (value) {
         const filterResult = domains.domain.filter((item: any) => {
           return String(item[name]).toLowerCase().includes(value.toLowerCase())

@@ -56,6 +56,7 @@ export async function middleware(request: NextRequest, response: NextResponse) {
 
   const hasScope = !!scope && !pathname.includes(scope)
 
+  // redirect eg. /data to /[domain]/data
   const shouldHandleRedirect =
     !PUBLIC_FILE.test(pathname) &&
     whiteList.find(t => pathname.startsWith(t)) &&
@@ -67,5 +68,5 @@ export async function middleware(request: NextRequest, response: NextResponse) {
     return NextResponse.redirect(url)
   }
 
-  return undefined
+  return NextResponse.next()
 }

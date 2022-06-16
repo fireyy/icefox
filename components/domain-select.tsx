@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Button, useTheme } from '@geist-ui/core'
@@ -15,18 +15,30 @@ type Props = {
 const DomainSelect: React.FC<Props> = ({ data, scope }) => {
   const router = useRouter()
   const theme = useTheme()
-  const domain = scope
+  const [domain, setDomain] = useState(scope)
 
-  const handleSelect = async (domain: string) => {
-    const res = await fetch(`/api/domains/${domain}`, {
+  const fetchDomain = async (d: string) => {
+    await fetch(`/api/domains/${d}`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' }
     })
-    const result = await res.json()
-    if (result.domain === domain) {
-      router.push(router.pathname.replace('[domain]', domain))
+    setDomain(d)
+  }
+
+  const handleSelect = async (d: string) => {
+    if (!router.pathname.startsWith('/[domain]')) {
+      fetchDomain(d)
+    } else if (domain !== d) {
+      router.push(router.pathname.replace('[domain]', d))
     }
   }
+
+  useEffect(() => {
+    if (router.query.domain && router.query.domain !== domain) {
+      const d = router.query.domain as string
+      fetchDomain(d)
+    }
+  }, [router.query.domain, domain])
 
   const UserSettingsPop = () => {
     return (

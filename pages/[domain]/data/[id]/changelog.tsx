@@ -19,8 +19,8 @@ const Changelog: NextPage = () => {
   const [pageIndex, setPageIndex] = useState(1)
   const [filterData, setFilterData] = useState([])
 
-  const { data: keyData } = useSWR(`/api/domains/${domain}/${keyId}`)
-  const { data = {}, error, mutate } = useSWR(`/api/changelog/${keyId}?page=${pageIndex}&limit=10`)
+  const { data: keyData } = useSWR(domain && `/api/domains/${domain}/${keyId}`)
+  const { data = {}, error, mutate } = useSWR(keyId && `/api/changelog/${keyId}?page=${pageIndex}&limit=10`)
 
   useEffect(() => {
     if (data && data.data) {

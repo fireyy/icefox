@@ -12,7 +12,7 @@ const Publishlog: NextPage = () => {
   const [drawerVisible, setDrawerVisible] = useState(false)
   const [publishdata, setPublishdata] = useState([])
 
-  const { data } = useSWR(`/api/publishlog/${domain}`)
+  const { data } = useSWR(domain && `/api/publishlog/${domain}`)
 
   const handleDetail = async (id: number) => {
     setDrawerVisible(true)

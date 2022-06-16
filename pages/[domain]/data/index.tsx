@@ -28,8 +28,8 @@ const Data: NextPage = () => {
   const [keyData, setKeyData] = useState<DataItems[]>([])
   const domain = router.query.domain
 
-  const { data, error, mutate } = useSWR(`/api/key/${domain}`)
-  const { data: squashList } = useSWR(`/api/squash/${domain}`)
+  const { data, error, mutate } = useSWR(domain && `/api/key/${domain}`)
+  const { data: squashList } = useSWR(domain && `/api/squash/${domain}`)
 
   useEffect(() => {
     if (data && filters && filters.length > 0) {

@@ -20,7 +20,7 @@ const Privilege: NextPage = () => {
   const [filterData, setFilterData] = useState([])
   const [users, setUsers] = useState<JSX.Element[]>([])
 
-  const { data: privilege, error, mutate } = useSWR(`/api/privilege/${domain}`)
+  const { data: privilege, error, mutate } = useSWR(domain && `/api/privilege/${domain}`)
   const { data: allUsers } = useSWR<User[]>(`/api/users`)
 
   useEffect(() => {
