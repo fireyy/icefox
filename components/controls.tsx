@@ -17,21 +17,30 @@ import { useRouter } from 'next/router'
 import { Dropdown, DropdownItem } from 'components/dropdown'
 
 type Props = {
-  email: string
+  data: any
 }
 
-const UserSettingsPop: React.FC<Props> = ({ email }) => {
+const UserSettingsPop: React.FC<Props> = ({ data }) => {
   const { theme, setTheme } = useNextTheme()
 
   return (
     <>
       <DropdownItem title>
-        Signed in as {email}
+        Signed in as {data.user.email}
       </DropdownItem>
-      <DropdownItem>
-        <NextLink href="/domains">Domains</NextLink>
-      </DropdownItem>
-      <DropdownItem line />
+      {
+      data.user.role === 'ADMIN' && (
+          <>
+            <DropdownItem>
+              <NextLink href="/domains">Domains</NextLink>
+            </DropdownItem>
+            <DropdownItem>
+              <NextLink href="/users">Users</NextLink>
+            </DropdownItem>
+            <DropdownItem line />
+          </>
+        )
+      }
       <DropdownItem>
         Theme
         <Select
@@ -98,9 +107,9 @@ const Controls: React.FC<unknown> = React.memo(() => {
       </Keyboard>
       <Spacer w={0.75} />
       { session && session.user && (
-        <Dropdown content={<UserSettingsPop email={session.user.email} />} portalClassName="user-settings__popover">
+        <Dropdown content={<UserSettingsPop data={session} />} portalClassName="user-settings__popover">
           <button className="user-settings__button">
-            <Avatar src={session.user.image} text={session.user.name} />
+            <Avatar src={session.user.image ?? ''} text={session.user.name ?? ''} />
           </button>
         </Dropdown>
       )}

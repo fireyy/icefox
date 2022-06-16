@@ -4,32 +4,25 @@ import { getToken } from 'next-auth/jwt'
 
 const PUBLIC_FILE = /\.(.*)$/
 
-const blacklist = [
-  '/api/',
-  '/sign-in',
-  '/domains',
-  '/no-permission',
+const whiteList = [
+  '/data',
+  '/publishlog',
+  '/privilege'
 ]
 
 const adminRoleProtect = [
   '/privilege',
   '/domains',
+  '/users',
 ]
 
 export async function middleware(request: NextRequest, response: NextResponse) {
   const { pathname } = request.nextUrl
   const url = request.nextUrl.clone()
   const scope = request.cookies.scope
-
-  console.log('pathname', pathname)
+  const token = request.cookies['next-auth.session-token']
 
   if (PUBLIC_FILE.test(pathname)) return NextResponse.next()
-
-  // FIXME: type check
-  const token: any = await getToken({
-    req: request,
-    secret: process.env.SECRET,
-  })
 
   // Allow the requests if the following in true
   // 1) Its a request for next-auth session & provider fetching
@@ -50,23 +43,27 @@ export async function middleware(request: NextRequest, response: NextResponse) {
     return NextResponse.redirect(url)
   }
 
-  if (token && adminRoleProtect.find(t => pathname === t) && token.role !== 'ADMIN') {
-    url.pathname = '/no-permission'
-    return NextResponse.redirect(url)
+  if (token && adminRoleProtect.find(t => pathname === t)) {
+    const session = await getToken({
+      req: request,
+      secret: process.env.SECRET,
+    })
+    if (session?.role !== 'ADMIN') {
+      url.pathname = '/no-permission'
+      return NextResponse.redirect(url)
+    }
   }
 
   const hasScope = !!scope && !pathname.includes(scope)
 
   const shouldHandleRedirect =
     !PUBLIC_FILE.test(pathname) &&
-    !blacklist.find(t => pathname.includes(t)) &&
+    whiteList.find(t => pathname.startsWith(t)) &&
     pathname !== '/' &&
     hasScope
 
   if (shouldHandleRedirect) {
-    console.log('should handle locale')
     url.pathname = `/${scope}${pathname}`
-
     return NextResponse.redirect(url)
   }
 

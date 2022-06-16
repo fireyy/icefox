@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import type { NextPage } from 'next'
-import { Button, Grid, useTheme, Input, useInput, Table, useModal, Modal, useToasts } from '@geist-ui/core'
+import Link from 'next/link'
+import { Button, Grid, useTheme, Input, Table, useModal, Modal, useToasts, Spacer } from '@geist-ui/core'
 import Plus from '@geist-ui/icons/plus'
 import Layout from 'components/layout'
 import { useForm } from 'react-hook-form'
@@ -15,10 +16,11 @@ type FormData = {
 const Domains: NextPage = () => {
   const theme = useTheme()
   const { visible, setVisible, bindings } = useModal()
-  const { state, setState, bindings:inputBindings } = useInput('')
+  const { visible: modalVisible, setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormData>()
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
+  const [domain, setDomain] = useState('')
   const [filterData, setFilterData] = useState([])
 
   const { data: domains, error, mutate } = useSWR(`/api/domains`)
@@ -45,7 +47,12 @@ const Domains: NextPage = () => {
     setLoading(false)
   })
 
-  const removeDomain = async (domain: string) => {
+  const handleRemove = (domain: string) => {
+    setModalVisible(true)
+    setDomain(domain)
+  }
+
+  const removeDomain = async () => {
     const res = await fetch(`/api/domains/${domain}`, {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' }
@@ -63,14 +70,20 @@ const Domains: NextPage = () => {
     }
   }
 
-  const renderLinks = () => {
+  const renderLinks = (a: string, rowData: any) => {
     return (
-      <a>123</a>
+      <>
+        <Link href={`/${rowData.domain}/data`}><a>Data</a></Link>
+        <Spacer w={0.3} />
+        <Link href={`/${rowData.domain}/publishlog`}><a>PublishLog</a></Link>
+        <Spacer w={0.3} />
+        <Link href={`/${rowData.domain}/privilege`}><a>Privilege</a></Link>
+      </>
     )
   }
   const renderAction = (id: number, rowData: any) => {
     return (
-      <Button type="secondary" auto scale={1/3} font="12px" onClick={() => removeDomain(rowData.domain)}>Delete</Button>
+      <Button type="secondary" auto scale={1/3} font="12px" onClick={() => handleRemove(rowData.domain)}>Delete</Button>
     )
   }
   const handleFilterChange = (name: string, value: string, callback = () => {}) => {
@@ -116,6 +129,14 @@ const Domains: NextPage = () => {
         </Modal.Content>
         <Modal.Action passive onClick={() => setVisible(false)}>Cancel</Modal.Action>
         <Modal.Action loading={loading} onClick={onSubmit}>Save</Modal.Action>
+      </Modal>
+      <Modal {...modalBindings}>
+        <Modal.Title>Confirm</Modal.Title>
+        <Modal.Content>
+          Are you sure you want to delete this item?
+        </Modal.Content>
+        <Modal.Action passive onClick={() => setModalVisible(false)}>Cancel</Modal.Action>
+        <Modal.Action loading={loading} onClick={removeDomain}>OK</Modal.Action>
       </Modal>
     </Layout>
   )

@@ -12,9 +12,7 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
   const session = await roleProtect(req, res)
 
   if (method === 'GET') {
-    const where: any = {
-      role: { not: 'admin' },
-    }
+    const where: any = {}
     if (s) {
       where.name = {
         contains: String(s),
@@ -27,6 +25,8 @@ export default async function handle (req: NextApiRequest, res: NextApiResponse)
         name: true,
         email: true,
         image: true,
+        role: true,
+        createdAt: true
       }
     })
     res.json(result ?? [])
