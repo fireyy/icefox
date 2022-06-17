@@ -34,7 +34,7 @@ const Header: React.FC<unknown> = () => {
           <div className="content">
             <div className="logo">
               <NextLink href={`/`}>
-                <a aria-label="Go Home" title="IceFox">
+                <a aria-label="Go Home" title="Icefox">
                   <svg aria-label="logo" height="20" viewBox="0 0 142 140" fill={`var(--geist-foreground)`}>
                     <path d="M25.5 9L50.1817 54.75H0.818275L25.5 9Z" />
                     <path d="M116.5 9L141.182 54.75H91.8183L116.5 9Z" />

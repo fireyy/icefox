@@ -21,7 +21,7 @@ export default function Layout({ title, children }: LayoutProps) {
   return (
     <>
       <Head>
-        <title>{`${title} - IceFox`}</title>
+        <title>{`${title} - Icefox`}</title>
       </Head>
       {
         !isFront && (
