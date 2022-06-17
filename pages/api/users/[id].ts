@@ -17,7 +17,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       await handleGET(id, res)
       break
     case 'PATCH':
-      await handlePATCH(id, data, res)
+      if (session?.user?.role === 'ADMIN') {
+        await handlePATCH(id, data, res)
+      } else {
+        res.status(401).json({ message: 'No Permission' })
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PATCH'])

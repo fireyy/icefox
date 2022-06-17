@@ -25,7 +25,11 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       }, res)
       break
     case 'DELETE':
-      await handleDELETE(domain, res)
+      if (session?.user?.role === 'ADMIN') {
+        await handleDELETE(domain, res)
+      } else {
+        res.status(401).json({ message: 'No Permission' })
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT', 'DELETE'])

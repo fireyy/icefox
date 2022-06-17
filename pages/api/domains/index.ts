@@ -16,10 +16,14 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       await handleGET(req, res)
       break
     case 'PUT':
-      await handlePUT({
-        ...data,
-        createBy: session?.user?.id,
-      }, res)
+      if (session?.user?.role === 'ADMIN') {
+        await handlePUT({
+          ...data,
+          createBy: session?.user?.id,
+        }, res)
+      } else {
+        res.status(401).json({ message: 'No Permission' })
+      }
       break
     default:
       res.setHeader('Allow', ['GET', 'PUT'])
@@ -43,7 +47,6 @@ async function handleGET(req:NextApiRequest, res: NextApiResponse) {
 }
 
 // PUT /api/domains
-// TODO: 权限控制
 async function handlePUT(data: any, res: NextApiResponse) {
   const result = await prisma.domain.create({
     data,
