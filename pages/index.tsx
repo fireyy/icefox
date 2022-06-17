@@ -38,6 +38,12 @@ const Home: NextPage<unknown> = () => {
         </Grid.Container>
         <Divider my={5} />
         <Grid.Container gap={2} marginTop={1} justify="flex-start" className="domain-overview">
+          <Grid xs={24} sm={12} md={8}>
+            <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
+              <Plus size={35} />
+              <Text>New</Text>
+            </Card>
+          </Grid>
           {
             domains && domains.domain && domains.domain.map((domain) => {
               return (
@@ -45,29 +51,24 @@ const Home: NextPage<unknown> = () => {
                   <Card width="100%" onClick={() => router.push(`/${domain.domain}/data`)} className="domain-card">
                     <Text h4 my={0}>{domain.domain}</Text>
                     <Text>Data: {`0`}</Text>
-                    <Card.Footer>
-                      <Text>{timeAgo(domain.createdAt)}</Text>
-                    </Card.Footer>
+                    <Text font={0.9} style={{ color: 'var(--body-color)' }}>{timeAgo(domain.createdAt)}</Text>
                   </Card>
                 </Grid>
               )
             })
           }
-          <Grid xs={24} sm={12} md={8}>
-            <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
-              <Plus size={35} />
-              <Text>New</Text>
-            </Card>
-          </Grid>
         </Grid.Container>
       </Layout>
       <style jsx global>{`
         .domain-overview .domain-card {
           cursor: pointer;
           position: relative;
+          border: none;
+          box-shadow: 0px 2px 4px rgba(0,0,0,.1);
+          transition: box-shadow .15s ease;
         }
         .domain-overview .domain-card:hover {
-          border-color: ${theme.palette.foreground};
+          box-shadow: 0px 4px 8px rgba(0,0,0,.12);
         }
         .domain-card-new {
           display: flex;
