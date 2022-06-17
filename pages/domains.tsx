@@ -7,7 +7,7 @@ import Layout from 'components/layout'
 import { useForm } from 'react-hook-form'
 import useSWR from 'swr'
 import { formatDate } from 'lib/utils'
-import InputFilter from 'components/input-filter'
+import FilterTable from 'components/filter-table'
 
 type FormData = {
   domain: string
@@ -21,15 +21,8 @@ const Domains: NextPage = () => {
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
   const [domain, setDomain] = useState('')
-  const [filterData, setFilterData] = useState([])
 
-  const { data: domains, error, mutate } = useSWR(`/api/domains`)
-
-  useEffect(() => {
-    if (domains && domains.domain) {
-      setFilterData(domains.domain)
-    }
-  }, [domains])
+  const { data: domains = { scope: '', domain: [] }, error, mutate } = useSWR(`/api/domains`)
 
   const onSubmit = handleSubmit(async (data) => {
     setLoading(true)
@@ -86,40 +79,19 @@ const Domains: NextPage = () => {
       <Button type="secondary" auto scale={1/3} font="12px" onClick={() => handleRemove(rowData.domain)}>Delete</Button>
     )
   }
-  const handleFilterChange = (name: string, value: string, callback = () => {}) => {
-    if (domains && domains.domain && domains.domain.length > 0) {
-      if (value) {
-        const filterResult = domains.domain.filter((item: any) => {
-          return String(item[name]).toLowerCase().includes(value.toLowerCase())
-        })
-        setFilterData(filterResult)
-      } else {
-        setFilterData(domains.domain)
-      }
-      callback && callback()
-    }
-  }
 
   return (
     <Layout title="Domains">
-      <Grid.Container gap={2} justify="flex-start">
-        <Grid md={12}>
-          <InputFilter name="domain" onChange={handleFilterChange} />
-        </Grid>
-        <Grid md={12} justify="flex-end">
-          <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)} scale={2/3}>
-            New
-          </Button>
-        </Grid>
-        <Grid md={24}>
-          <Table data={filterData}>
-            <Table.Column prop="domain" label="Domain" />
-            <Table.Column prop="comment" label="" render={renderLinks} />
-            <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
-            <Table.Column prop="id" label="operation" width={100} render={renderAction} />
-          </Table>
-        </Grid>
-      </Grid.Container>
+      <FilterTable data={domains.domain} filter={['domain']} buttons={(
+        <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)} scale={2/3}>
+          New
+        </Button>
+      )}>
+        <Table.Column prop="domain" label="Domain" />
+        <Table.Column prop="comment" label="" render={renderLinks} />
+        <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
+        <Table.Column prop="id" label="operation" width={100} render={renderAction} />
+      </FilterTable>
       <Modal {...bindings}>
         <Modal.Title>Domain</Modal.Title>
         <Modal.Content>

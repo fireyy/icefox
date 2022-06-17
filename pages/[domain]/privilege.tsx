@@ -6,8 +6,8 @@ import Layout from 'components/layout'
 import useSWR from 'swr'
 import Plus from '@geist-ui/icons/plus'
 import { formatDate } from 'lib/utils'
-import InputFilter from 'components/input-filter'
 import { User } from 'lib/interfaces'
+import FilterTable from 'components/filter-table'
 
 const Privilege: NextPage = () => {
   const router = useRouter()
@@ -17,17 +17,10 @@ const Privilege: NextPage = () => {
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const { visible, setVisible, bindings } = useModal()
   const [id, setId] = useState<number>()
-  const [filterData, setFilterData] = useState([])
   const [users, setUsers] = useState<JSX.Element[]>([])
 
   const { data: privilege, error, mutate } = useSWR(domain && `/api/privilege/${domain}`)
   const { data: allUsers } = useSWR<User[]>(`/api/users`)
-
-  useEffect(() => {
-    if (privilege) {
-      setFilterData(privilege)
-    }
-  }, [privilege])
 
   useEffect(() => {
     if (allUsers) {
@@ -89,19 +82,6 @@ const Privilege: NextPage = () => {
       <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
     )
   }
-  const handleFilterChange = (name: string, value: string, callback = () => {}) => {
-    if (privilege && privilege.length > 0) {
-      if (value) {
-        const filterResult = privilege.filter((item: any) => {
-          return String(item.user.name).toLowerCase().includes(value.toLowerCase())
-        })
-        setFilterData(filterResult)
-      } else {
-        setFilterData(privilege)
-      }
-      callback && callback()
-    }
-  }
   const searchHandler = async (val: string) => {
     if (!val) return setUsers(makeOptions(allUsers || []))
     setLoading(true)
@@ -128,23 +108,15 @@ const Privilege: NextPage = () => {
   }
   return (
     <Layout title="Privilege">
-      <Grid.Container gap={2} justify="flex-start">
-        <Grid md={12}>
-          <InputFilter name="user" onChange={handleFilterChange} />
-        </Grid>
-        <Grid md={12} justify="flex-end">
-          <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)} scale={2/3}>
-            New
-          </Button>
-        </Grid>
-        <Grid md={24}>
-          <Table data={filterData}>
-            <Table.Column prop="userId" label="name" render={renderUser} />
-            <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
-            <Table.Column prop="id" label="operation" width={100} render={renderAction} />
-          </Table>
-        </Grid>
-      </Grid.Container>
+      <FilterTable data={privilege} filter={['user.name']} buttons={(
+        <Button auto type="secondary" icon={<Plus />} onClick={() => setVisible(true)} scale={2/3}>
+          New
+        </Button>
+      )}>
+        <Table.Column prop="userId" label="name" render={renderUser} />
+        <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
+        <Table.Column prop="id" label="operation" width={100} render={renderAction} />
+      </FilterTable>
       <Modal {...modalBindings}>
         <Modal.Title>Confirm</Modal.Title>
         <Modal.Content>

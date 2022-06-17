@@ -8,12 +8,7 @@ import { useRouter } from 'next/router'
 import DataDrawer from 'components/data-drawer'
 import useSWR from 'swr'
 import { DataItem, DataItems } from 'lib/interfaces'
-import InputFilter from 'components/input-filter'
-
-type FilterItem = {
-  name: string
-  value: string
-}
+import FilterTable from 'components/filter-table'
 
 const Data: NextPage = () => {
   const router = useRouter()
@@ -24,24 +19,10 @@ const Data: NextPage = () => {
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const { setVisible: setPublishModalVisible, bindings: publishBindings } = useModal()
   const [publishPaths, setPublishPaths] = useState<string[]>([])
-  const [filters, setFilters] = useState<FilterItem[]>([])
-  const [keyData, setKeyData] = useState<DataItems[]>([])
   const domain = router.query.domain
 
   const { data, error, mutate } = useSWR(domain && `/api/key/${domain}`)
   const { data: squashList } = useSWR(domain && `/api/squash/${domain}`)
-
-  useEffect(() => {
-    if (data && filters && filters.length > 0) {
-      const filterResult = data.filter((item: DataItem) => {
-        return filters.every((f: FilterItem) => String(item[f.name as keyof DataItem]).toLowerCase().includes(f.value.toLowerCase()))
-      })
-      setKeyData(filterResult)
-    } else if (filters.length === 0) {
-      // reset
-      setKeyData(data)
-    }
-  }, [data, filters])
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -129,31 +110,10 @@ const Data: NextPage = () => {
     setLoading(false)
   }
 
-  const handleFilterChange = (name: string, value: string, callback = () => {}) => {
-    if (data && data.length > 0) {
-      if (value) {
-        setFilters([...filters, {
-          name,
-          value
-        }])
-      } else {
-        setFilters([...filters.filter((item: FilterItem) => item.name !== name)])
-      }
-      callback && callback()
-    }
-  }
-
   return (
     <Layout title="Data">
-      <Grid.Container gap={2} justify="flex-start">
-        <Grid md={12}>
-          <InputFilter name="path" onChange={handleFilterChange} />
-          <Spacer w={0.5} />
-          <InputFilter name="name" onChange={handleFilterChange} />
-          <Spacer w={0.5} />
-          <InputFilter name="value" onChange={handleFilterChange} />
-        </Grid>
-        <Grid md={12} justify="flex-end">
+      <FilterTable data={data} filter={['path', 'name', 'value']} buttons={(
+        <>
           <Button auto type="success" icon={<UploadCloud />} onClick={handlePublish} scale={2/3}>
             Publish
           </Button>
@@ -161,17 +121,14 @@ const Data: NextPage = () => {
           <Button auto type="secondary" icon={<Plus />} onClick={handleNew} scale={2/3}>
             New
           </Button>
-        </Grid>
-        <Grid md={24}>
-          <Table data={keyData} emptyText="No Data to show">
-            <Table.Column prop="path" label="path" />
-            <Table.Column prop="name" label="name" />
-            <Table.Column prop="value" label="value" />
-            <Table.Column prop="comment" label="comment" />
-            <Table.Column prop="id" label="operation" width={250} render={renderAction} />
-          </Table>
-        </Grid>
-      </Grid.Container>
+        </>
+      )}>
+        <Table.Column prop="path" label="path" />
+        <Table.Column prop="name" label="name" />
+        <Table.Column prop="value" label="value" />
+        <Table.Column prop="comment" label="comment" />
+        <Table.Column prop="id" label="operation" width={250} render={renderAction} />
+      </FilterTable>
       <DataDrawer visible={sideVisible} setVisible={setSideVisible} item={current} onUpdate={handleUpdate} />
       <Modal {...modalBindings}>
         <Modal.Title>Confirm</Modal.Title>

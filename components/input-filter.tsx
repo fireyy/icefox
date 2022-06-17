@@ -9,12 +9,13 @@ import useDebounce from 'lib/use-debounce'
 type Props = {
   name: string
   onChange: (name: string, value: string, callback?: () => void) => void
+  isClear: number
 }
 
-const InputFilter: React.FC<Props> = ({ name, onChange }) => {
+const InputFilter: React.FC<Props> = ({ name, onChange, isClear }) => {
   const [onComposition, setOnComposition] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
-  const { bindings: inputBindings, setState: setInput, state: input } = useInput('')
+  const { bindings: inputBindings, setState: setInput, state: input, reset } = useInput('')
   const debouncedSearchTerm: string = useDebounce<string>(input, 500)
 
   useEffect(
@@ -29,6 +30,13 @@ const InputFilter: React.FC<Props> = ({ name, onChange }) => {
       }
     },
     [debouncedSearchTerm] // Only call effect if debounced search term changes
+  )
+
+  useEffect(
+    () => {
+      isClear && reset()
+    },
+    [isClear]
   )
 
   const handleComposition = (e: React.CompositionEvent<HTMLInputElement>) => {
