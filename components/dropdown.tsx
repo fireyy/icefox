@@ -58,6 +58,7 @@ export const Dropdown = React.forwardRef<
         .drop-menu-box .item.checked {
           font-weight: 500;
           color: ${theme.palette.accents_8};
+          background-color: ${theme.palette.accents_1};
         }
         .drop-menu-box .item.disabled {
           cursor: not-allowed;

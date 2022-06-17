@@ -60,6 +60,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope }) => {
             )
           })
         }
+        <DropdownItem line />
         <DropdownItem>
           <Link href="/domains">Add New Domain</Link>
           <Plus size={18} />
