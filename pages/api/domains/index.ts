@@ -22,7 +22,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
           createBy: session?.user?.id,
         }, res)
       } else {
-        res.status(401).json({ message: 'No Permission' })
+        res.status(403).json({ message: 'No Permission' })
       }
       break
     default:

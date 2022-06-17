@@ -20,7 +20,7 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
       if (session?.user?.role === 'ADMIN') {
         await handlePATCH(id, data, res)
       } else {
-        res.status(401).json({ message: 'No Permission' })
+        res.status(403).json({ message: 'No Permission' })
       }
       break
     default:

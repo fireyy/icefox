@@ -4,7 +4,7 @@ import Error from 'next/error'
 
 
 const NoPermission: NextPage = () => {
-  return <Error statusCode={401} title="No Permission here" />
+  return <Error statusCode={403} title="No Permission here" />
 }
 
 export default NoPermission

@@ -2,7 +2,7 @@ import {
   ThemeProvider as NextThemeProvider,
   useTheme as useNextTheme,
 } from 'next-themes'
-import { GeistProvider, CssBaseline, useTheme, Themes } from '@geist-ui/core'
+import { GeistProvider, CssBaseline } from '@geist-ui/core'
 import { PropsWithChildren } from 'react'
 
 function CustomProvider({ children }: PropsWithChildren<{}>) {
