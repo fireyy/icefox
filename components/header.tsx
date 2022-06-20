@@ -11,7 +11,7 @@ const Header: React.FC<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
 
-  const { data: domains } = useSWR(`/api/domains`)
+  const { data: domains, mutate } = useSWR(`/api/domains`)
 
   const names = router.pathname.split('/').filter(r => !!r)
   // /[domain]/xxxxx
@@ -24,9 +24,11 @@ const Header: React.FC<unknown> = () => {
       const defaultPath = tab ? `/${domains.scope}/${tab}` : '/'
       router.push(defaultPath)
     },
-    [currentUrlTabValue, domains],
+    [currentUrlTabValue, domains]
   )
-
+  const handleUpdate = (dom: string) => {
+    mutate({ ...domains, scope: dom }, { revalidate: false })
+  }
   return (
     <>
       <div className="header-wrapper">
@@ -45,7 +47,7 @@ const Header: React.FC<unknown> = () => {
             </div>
             <Divider color={theme.palette.accents_2} />
             {
-              domains && domains.scope && <DomainSelect data={domains.domain} scope={domains.scope} />
+              domains && domains.scope && <DomainSelect data={domains.domain} scope={domains.scope} onUpdate={handleUpdate} />
             }
             <div className="menu">
               <Tabs

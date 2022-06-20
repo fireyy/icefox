@@ -11,6 +11,7 @@ import InputFilter from './input-filter'
 type Props = {
   data: any
   scope: string
+  onUpdate?: (domain: string) => void
 }
 
 type FilterItem = {
@@ -18,7 +19,7 @@ type FilterItem = {
   value: string
 }
 
-const DomainSelect: React.FC<Props> = ({ data, scope }) => {
+const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
   const router = useRouter()
   const theme = useTheme()
   const [domain, setDomain] = useState(scope)
@@ -42,6 +43,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope }) => {
 
   const handleSelect = async (d: string) => {
     setVisible(false)
+    onUpdate && onUpdate(d)
     if (!router.pathname.startsWith('/[domain]')) {
       fetchDomain(d)
     } else if (domain !== d) {
@@ -95,7 +97,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope }) => {
             {
               keyData.map((item: any) => {
                 return (
-                  <div key={item.id} className={domain === item.domain ? 'item checked' : 'item'} onClick={() => handleSelect(item.domain)}>
+                  <div key={item.id} className="item" onClick={() => handleSelect(item.domain)} aria-current={domain === item.domain}>
                     <span>{item.domain}</span>
                     {
                       domain === item.domain ? (
@@ -187,8 +189,11 @@ const DomainSelect: React.FC<Props> = ({ data, scope }) => {
           border-radius: var(--geist-radius);
           user-select: none;
         }
-        .domain-select .lists .item:hover,
-        .domain-select .lists .item.checked {
+        .domain-select .lists .item:hover {
+          background: var(--accent-1);
+          color: var(--geist-foreground);
+        }
+        .domain-select .lists .item[aria-current="true"] {
           background: var(--accent-2);
           color: var(--geist-foreground);
         }
