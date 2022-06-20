@@ -30,7 +30,6 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
   const ref = React.useRef<HTMLDivElement>(null)
 
   useClickAway(ref, () => {
-    console.log('clicked away')
     setVisible(false)
   })
 

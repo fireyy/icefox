@@ -52,6 +52,8 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
       setValue('type', data.type)
       setValue('value', data.value)
       setValue('comment', data.comment)
+    } else {
+      resetData()
     }
   }, [data])
 
@@ -94,7 +96,6 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
 
   const handleDrawerClose = () => {
     setVisible(false)
-    resetData()
   }
 
   return (

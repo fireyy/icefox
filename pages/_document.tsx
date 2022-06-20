@@ -1,4 +1,4 @@
-import { Fragment } from 'react'
+import React from 'react'
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
 import { CssBaseline } from '@geist-ui/core'
 
@@ -10,10 +10,8 @@ class MyDocument extends Document {
     return {
       ...initialProps,
       styles: [
-        <Fragment key="1">
-          {initialProps.styles}
-          {styles}
-        </Fragment>
+        ...React.Children.toArray(initialProps.styles),
+        ...styles,
       ],
     }
   }

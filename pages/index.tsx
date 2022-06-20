@@ -1,11 +1,13 @@
 import type { NextPage } from 'next'
 import { Divider, Grid, Card, Text, useTheme } from '@geist-ui/core'
 import useSWR from 'swr'
+import useSWRInfinite from 'swr/infinite'
 import { useRouter } from 'next/router'
 import Plus from '@geist-ui/icons/plus'
 import Layout from 'components/layout'
 import { DomainData } from 'lib/interfaces'
 import { timeAgo } from 'lib/utils'
+import { useSession } from 'next-auth/react'
 
 type OverviewType = {
   user: number,
@@ -17,6 +19,7 @@ type OverviewType = {
 const Home: NextPage<unknown> = () => {
   const router = useRouter()
   const theme = useTheme()
+  const { data: session } = useSession()
 
   const { data = { user: 0, key: 0, domain: 0, publish: 0 } } = useSWR<OverviewType>('/api/overview')
   const { data: domains } = useSWR<DomainData>(`/api/domains`)
@@ -24,6 +27,7 @@ const Home: NextPage<unknown> = () => {
   return (
       <>
       <Layout title="Dashboard">
+        <Divider mb={5}>Overview</Divider>
         <Grid.Container gap={2}>
           {
             Object.keys(data).map((d, index) => (
@@ -36,14 +40,18 @@ const Home: NextPage<unknown> = () => {
             ))
           }
         </Grid.Container>
-        <Divider my={5} />
+        <Divider my={5}>Domains</Divider>
         <Grid.Container gap={2} marginTop={1} justify="flex-start" className="domain-overview">
-          <Grid xs={24} sm={12} md={8}>
-            <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
-              <Plus size={35} />
-              <Text>New</Text>
-            </Card>
-          </Grid>
+          {
+            session?.user?.role === 'ADMIN' && (
+              <Grid xs={24} sm={12} md={8}>
+                <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
+                  <Plus size={35} />
+                  <Text>New</Text>
+                </Card>
+              </Grid>
+            )
+          }
           {
             domains && domains.domain && domains.domain.map((domain) => {
               return (
