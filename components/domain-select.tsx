@@ -23,13 +23,14 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
   const router = useRouter()
   const theme = useTheme()
   const [domain, setDomain] = useState(scope)
-  const [filters, setFilters] = useState<FilterItem[]>([])
+  const [filter, setFilter] = useState<FilterItem | null>(null)
   const [keyData, setKeyData] = useState<[]>(data)
   const [isClear, setIsClear] = useState(0)
   const [visible, setVisible] = useState(false)
   const ref = React.useRef<HTMLDivElement>(null)
 
   useClickAway(ref, () => {
+    console.log('clicked away')
     setVisible(false)
   })
 
@@ -64,20 +65,19 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
         const filterResult = data.filter((item: any) => {
           return String(item[name]).toLowerCase().includes(value.toLowerCase())
         })
-        setFilters([{
+        setFilter({
           name,
           value
-        }])
+        })
         setKeyData(filterResult)
       } else {
-        setFilters([])
+        setFilter(null)
         setKeyData(data)
       }
       callback && callback()
     }
   }
   const handleClearSearch = () => {
-    setFilters([])
     setIsClear(isClear+1)
   }
   const handleNew = () => {
@@ -109,7 +109,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
               })
             }
             {
-              filters.length === 0 && (
+              !filter && (
                 <div className="item" onClick={handleNew}>
                   <span>Add New Domain</span>
                   <Plus size={18} />
@@ -117,9 +117,9 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
               )
             }
             {
-              keyData && keyData.length === 0 && filters.length > 0 && (
+              keyData && keyData.length === 0 && filter && (
                 <div className="nothing">
-                  <Text>No results for <Code>{filters.map(f => `${f.name}=${f.value}`).join(', ')}</Code></Text>
+                  <Text>No results for <Code>{`${filter.name}=${filter.value}`}</Code></Text>
                   <Button auto onClick={handleClearSearch}>Clear Search</Button>
                 </div>
               )
@@ -172,6 +172,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
         }
         .domain-select .popup .lists {
           margin: 8px;
+          max-height: 190px;
           overflow-y: auto;
           transition: height .1s ease;
           will-change: height;
@@ -204,6 +205,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
           display: flex;
           flex-direction: column;
           align-items: center;
+          justify-content: center;
         }
       `}</style>
     </>
