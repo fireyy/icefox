@@ -64,7 +64,7 @@ const FilterTable: React.FC<Props> = ({ data = [], filter = [], children, button
           {
             filter.map((item: string) => (
               <Fragment key={item}>
-                <InputFilter name={item} onChange={handleFilterChange} isClear={isClear} />
+                <InputFilter name={item} onCallback={handleFilterChange} isClear={isClear} />
                 <Spacer w={0.5} />
               </Fragment>
             ))
