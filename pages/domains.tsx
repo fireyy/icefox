@@ -17,7 +17,7 @@ const Domains: NextPage = () => {
   const theme = useTheme()
   const { visible, setVisible, bindings } = useModal()
   const { visible: modalVisible, setVisible: setModalVisible, bindings: modalBindings } = useModal()
-  const { register, setValue, handleSubmit, formState: { errors } } = useForm<FormData>()
+  const { register, setValue, handleSubmit, reset, formState: { errors } } = useForm<FormData>()
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
   const [domain, setDomain] = useState('')
@@ -38,6 +38,7 @@ const Domains: NextPage = () => {
     })
     setVisible(false)
     setLoading(false)
+    reset()
   })
 
   const handleRemove = (domain: string) => {
