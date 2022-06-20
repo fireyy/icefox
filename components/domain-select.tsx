@@ -88,7 +88,7 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
   return (
     <>
       <div ref={ref} className={visible ? 'domain-select visible' : 'domain-select hidden'}>
-        <Button className="domain-select-button" type="abort" auto iconRight={<ChevronUpDown />} scale={2/3} pl={0.2} onClick={() => setVisible(!visible)}>{(domain || '').split('.')[0]}</Button>
+        <Button className="domain-select-button" type="abort" auto iconRight={<ChevronUpDown />} scale={2/3} pl={0.2} onClick={() => setVisible(!visible)} title={domain}>{(domain || '').split('.')[0]}</Button>
         <div className="popup">
           <div className="filter">
             <InputFilter icon={<Search />} name="domain" onCallback={handleFilterChange} isClear={isClear} width="100%" />
@@ -140,11 +140,13 @@ const DomainSelect: React.FC<Props> = ({ data, scope, onUpdate }) => {
         }
         .domain-select :global(.domain-select-button .text) {
           width: 80px;
+          display: block;
           overflow: hidden;
           white-space: nowrap;
-          text-overflow: ellipsis;
+          text-overflow: clip;
           text-align: left;
           padding-right: 0;
+          justify-content: flex-start;
         }
         .domain-select .popup {
           position: absolute;
