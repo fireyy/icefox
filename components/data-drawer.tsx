@@ -11,7 +11,7 @@ type Props = {
   visible: boolean,
   setVisible: (state: boolean) => void,
   item: number,
-  onUpdate: (type: string, payload?: any) => void
+  onUpdate: (type: string, payload?: DataItem) => void
 }
 
 type FormData = {
@@ -33,7 +33,6 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
   const isEdit = item ? true : false
   const { setToast } = useToasts()
   const domain = router.query.domain
-  // const watchType = watch('type', '1')
   const watchType = useWatch({
     control,
     name: 'type',

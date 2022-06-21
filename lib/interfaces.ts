@@ -1,3 +1,5 @@
+import type { User as USER, Key, Domain, changelog, privilege } from '@prisma/client'
+
 export type Seed = {
   name: string
   comment: string
@@ -7,29 +9,10 @@ export type Seed = {
 
 export type Seeds = Array<Seed>
 
-export type User = {
-  id: number
-  name: string
-  email: string
-  image?: string
-  role: string
-  createdAt: string
-}
+export type User = USER
 
-export type DataItem = {
-  id: number
-  domain: string
-  path: string
-  name: string
-  comment: string
-  value: string
-  type: number
-  isDelete: number
-  createdAt: string
-  updatedAt: string
-  publishAt: string
+export type DataItem = Key & {
   user?: User
-  createBy: Number
 }
 
 export type DataItems = Array<DataItem>
@@ -43,12 +26,7 @@ export type SquashItem = {
 
 export type SquashItems = Array<SquashItem>
 
-export type DomainItem = {
-  id: number
-  domain: string
-  createBy: number
-  createdAt: string
-  updatedAt: string
+export type DomainItem = Domain & {
   user?: User
 }
 
@@ -58,3 +36,28 @@ export type DomainData = {
   scope: string
   domain: DomainItems
 }
+
+export type ChangelogItem = changelog & {
+  user?: User
+}
+
+export type ChangelogItems = Array<ChangelogItem>
+
+export type ChangelogData = {
+  page: string
+  pageCount: number
+  total: number
+  data: ChangelogItems
+}
+
+export type TableColumnRender<T extends Record<string, any>> = (
+  value: T[keyof T],
+  rowData: T,
+  rowIndex: number,
+) => JSX.Element | void
+
+export type PrivilegeItem = privilege & {
+  user?: User
+}
+
+export type PrivilegeItems = Array<PrivilegeItem>

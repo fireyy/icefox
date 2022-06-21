@@ -31,16 +31,16 @@ const Data: NextPage = () => {
 
   const { data, error, mutate } = useSWR(domain && `/api/key/${domain}`)
 
-  const handleUpdate = (type: string, payload: any) => {
+  const handleUpdate = (type: string, payload?: DataItem) => {
     if (type === 'add') {
       mutate()
-    } else if (type === 'update') {
+    } else if (type === 'update' && payload) {
       mutate((mate: DataItems) => {
         const index = mate.findIndex((item: DataItem) => item.id === payload.id)
         mate[index] = payload
         return mate
       })
-    } else if (type === 'remove') {
+    } else if (type === 'remove' && payload) {
       mutate(data.filter((item: DataItem) => item.id !== payload.id))
     }
   }

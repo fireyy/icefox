@@ -86,7 +86,7 @@ const FilterTable: React.FC<Props> = ({ data = [], filter = [], children, button
               <Spacer w={2} />
               <Skeleton width={240} />
               <Spacer w={2} />
-              <Skeleton autoSize />
+              <Skeleton width="100%" />
             </Grid>
           ))
         }

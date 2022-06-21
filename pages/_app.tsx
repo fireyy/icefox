@@ -68,6 +68,8 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             --geist-foreground: ${lightPalette?.foreground};
             --geist-background: ${lightPalette?.background};
             --geist-radius: 5px;
+            --geist-gap: ${theme.layout.gap};
+            --geist-page-width-with-margin: ${theme.layout.pageWidthWithMargin};
           }
           [data-theme='dark'] {
             --accent-1: ${darkPalette?.accents_1};

@@ -41,7 +41,7 @@ const Skeleton: React.FC<Props> = ({
         !isChildNull(children) || show
           ? undefined
           : {
-              width: 'autoSize' in props ? '100%' : width || 160,
+              width: width || 160,
               minHeight: height,
               ...(vcenter
                 ? {

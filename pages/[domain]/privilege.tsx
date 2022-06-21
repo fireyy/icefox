@@ -8,6 +8,7 @@ import { formatDate } from 'lib/utils'
 import FilterTable from 'components/filter-table'
 import dynamic from 'next/dynamic'
 import Skeleton from 'components/skeleton'
+import { TableColumnRender, PrivilegeItem, PrivilegeItems } from 'lib/interfaces'
 
 const GiveUserModal= dynamic(() => import('../../components/give-user-modal'), {
   ssr: false,
@@ -22,7 +23,7 @@ const Privilege: NextPage = () => {
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
   const [id, setId] = useState<number>()
 
-  const { data: privilege, error, mutate } = useSWR(domain && `/api/privilege/${domain}`)
+  const { data: privilege, error, mutate } = useSWR<PrivilegeItems>(domain && `/api/privilege/${domain}`)
 
   const handleRemove = async (val: number) => {
     setModalVisible(true)
@@ -47,14 +48,14 @@ const Privilege: NextPage = () => {
     setLoading(false)
   }
 
-  const renderUser = (user: string, rowData: any) => {
+  const renderUser: TableColumnRender<PrivilegeItem> = (userId, rowData) => {
     return (
-      <>{rowData.user.name}({rowData.user.email})</>
+      <>{rowData?.user?.name}({rowData?.user?.email})</>
     )
   }
-  const renderAction = (id: number, rowData: any) => {
+  const renderAction: TableColumnRender<PrivilegeItem> = (id, rowData) => {
     return (
-      <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
+      <Button auto scale={0.25} onClick={() => handleRemove(rowData.id)}>Remove</Button>
     )
   }
 

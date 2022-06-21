@@ -15,6 +15,7 @@
     "@geist-ui/icons": "^1.0.2",
     "@next-auth/prisma-adapter": "^1.0.3",
     "@prisma/client": "^3.15.0",
+    "clsx": "^1.1.1",
     "cookie": "^0.5.0",
     "dayjs": "^1.11.3",
     "mkdirp": "^1.0.4",

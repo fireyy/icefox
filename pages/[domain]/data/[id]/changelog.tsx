@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { Button, Grid, Table, useModal, Modal, useToasts, Breadcrumbs, Pagination } from '@geist-ui/core'
+import { Button, Grid, Table, useModal, Modal, useToasts, Breadcrumbs, Pagination, TableColumnProps } from '@geist-ui/core'
 import Layout from 'components/layout'
 import useSWR from 'swr'
 import ArrowLeft from '@geist-ui/icons/arrowLeft'
 import { formatDate } from 'lib/utils'
 import FilterTable from 'components/filter-table'
+import { ChangelogItem, TableColumnRender } from 'lib/interfaces'
 
 const Changelog: NextPage = () => {
   const router = useRouter()
@@ -47,12 +48,12 @@ const Changelog: NextPage = () => {
     }
   }
 
-  const renderUser = (user: string, rowData: any) => {
+  const renderUser: TableColumnRender<ChangelogItem> = (createBy, rowData) => {
     return (
-      <>{rowData.user.name}({rowData.user.email})</>
+      <>{rowData?.user?.name}({rowData?.user?.email})</>
     )
   }
-  const renderAction = (id: number, rowData: any) => {
+  const renderAction: TableColumnRender<ChangelogItem> = (id, rowData) => {
     return (
       <Button auto scale={0.25} onClick={() => handleReuse(rowData.value)}>Reuse</Button>
     )
@@ -65,7 +66,7 @@ const Changelog: NextPage = () => {
       </Breadcrumbs>
       <FilterTable data={data.data} filter={['value']}>
         <Table.Column prop="value" label="value" />
-        <Table.Column prop="creatBy" label="by" render={renderUser} />
+        <Table.Column prop="createBy" label="by" render={renderUser} />
         <Table.Column prop="createdAt" label="createdAt" render={(time: string) => (<>{formatDate(time)}</>)} />
         <Table.Column prop="id" label="operation" width={100} render={renderAction} />
       </FilterTable>
