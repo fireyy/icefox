@@ -63,12 +63,6 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     }
   }, [data])
 
-  // const handleTypeChange = (val: string | string[]) => {
-  //   const type = Number(val)
-  //   setValue('type', type)
-  //   setValue('value', '')
-  // }
-
   const onSubmit = handleSubmit(async (data) => {
     if (data.type === '4' && data.value === '') {
       data.value = 'false'
@@ -151,7 +145,7 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
                   watchType === '3' && <Input placeholder="Number" htmlType="number" {...registerValue} />
                 }
                 {
-                  watchType === '4' && <Toggle checked={watchValue === '' || watchValue === 'false' ? false : true} onChange={(e) => setValue('value', `${e.target.checked}`)} />
+                  watchType === '4' && <Toggle scale={1.5} checked={watchValue === '' || watchValue === 'false' ? false : true} onChange={(e) => setValue('value', `${e.target.checked}`)} />
                 }
                 {
                   watchType === '5' && <Input placeholder="Number" max={100} min={0} htmlType="number" {...registerValue} />

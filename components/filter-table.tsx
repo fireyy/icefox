@@ -8,6 +8,7 @@ import {
   Code,
 } from '@geist-ui/core'
 import InputFilter from 'components/input-filter'
+import Skeleton from 'components/skeleton'
 
 type Props = {
   data: any
@@ -78,6 +79,17 @@ const FilterTable: React.FC<Props> = ({ data = [], filter = [], children, button
             {children}
           </Table>
         </Grid>
+        {
+          !data || data.length === 0 && [{}, {}, {}].map((_, index) => (
+            <Grid key={index} md={24} direction="row">
+              <Skeleton width={120} />
+              <Spacer w={2} />
+              <Skeleton width={240} />
+              <Spacer w={2} />
+              <Skeleton autoSize />
+            </Grid>
+          ))
+        }
         {
           keyData && keyData.length === 0 && filters.length > 0 && (
             <Grid md={24} direction="column" alignItems="center">

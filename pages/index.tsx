@@ -1,13 +1,13 @@
 import type { NextPage } from 'next'
 import { Divider, Grid, Card, Text, useTheme } from '@geist-ui/core'
 import useSWR from 'swr'
-import useSWRInfinite from 'swr/infinite'
 import { useRouter } from 'next/router'
 import Plus from '@geist-ui/icons/plus'
 import Layout from 'components/layout'
 import { DomainData } from 'lib/interfaces'
 import { timeAgo } from 'lib/utils'
 import { useSession } from 'next-auth/react'
+import Skeleton from 'components/skeleton'
 
 type OverviewType = {
   user: number,
@@ -43,16 +43,6 @@ const Home: NextPage<unknown> = () => {
         <Divider my={5}>Domains</Divider>
         <Grid.Container gap={2} marginTop={1} justify="flex-start" className="domain-overview">
           {
-            session?.user?.role === 'ADMIN' && (
-              <Grid xs={24} sm={12} md={8}>
-                <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
-                  <Plus size={35} />
-                  <Text>New</Text>
-                </Card>
-              </Grid>
-            )
-          }
-          {
             domains && domains.domain && domains.domain.map((domain) => {
               return (
                 <Grid xs={24} sm={12} md={8} key={domain.domain}>
@@ -64,6 +54,29 @@ const Home: NextPage<unknown> = () => {
                 </Grid>
               )
             })
+          }
+          {
+            !domains && [{}, {}, {}, {}, {}, {}].map((_, index) => {
+              return (
+                <Grid xs={24} sm={12} md={8} key={index}>
+                  <Card width="100%" className="domain-card">
+                    <Skeleton width={200} height={28} />
+                    <Skeleton width={80} height={26} boxHeight={52} vcenter />
+                    <Skeleton width={120} height={23} boxHeight={33} />
+                  </Card>
+                </Grid>
+              )
+            })
+          }
+          {
+            session?.user?.role === 'ADMIN' && (
+              <Grid xs={24} sm={12} md={8}>
+                <Card width="100%" onClick={() => router.push(`/domains`)} className="domain-card domain-card-new">
+                  <Plus size={35} />
+                  <Text>New</Text>
+                </Card>
+              </Grid>
+            )
           }
         </Grid.Container>
       </Layout>

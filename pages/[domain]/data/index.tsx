@@ -81,10 +81,6 @@ const Data: NextPage = () => {
   const renderAction = (id: number) => {
     return (
       <>
-        <Button auto scale={0.25} onClick={() => setToast({
-          text: 'Removed data Successfully.',
-          type: 'success',
-        })}>toast</Button>
         <Button auto scale={0.25} onClick={() => handleEdit(id)}>Edit</Button>
         <Spacer w={0.5} />
         <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
