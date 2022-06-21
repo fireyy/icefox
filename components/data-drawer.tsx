@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { Drawer, Text, Textarea, Grid, useToasts, Input, Toggle, Button, Select, Slider } from '@geist-ui/core'
+import { Drawer, Text, Textarea, Grid, useToasts, Input, Toggle, Button } from '@geist-ui/core'
 import { DataItem } from 'lib/interfaces'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { useRouter } from 'next/router'
 import { dataKeyType } from 'lib/contants'
 import useSWR from 'swr'
+import Select from 'components/select'
 
 type Props = {
   visible: boolean,
@@ -16,7 +17,7 @@ type Props = {
 type FormData = {
   name: string
   path: string
-  type: number
+  type: string
   value: string
   comment: string
 }
@@ -26,13 +27,18 @@ type InputTypes = {
 }
 
 const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate }) => {
-  const { register, setValue, getValues, handleSubmit, watch, reset: resetData, formState: { errors } } = useForm<FormData>()
+  const { register, setValue, getValues, control, handleSubmit, watch, reset: resetData, formState: { errors } } = useForm<FormData>()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
   const isEdit = item ? true : false
   const { setToast } = useToasts()
   const domain = router.query.domain
-  const watchType = watch('type', 1)
+  // const watchType = watch('type', '1')
+  const watchType = useWatch({
+    control,
+    name: 'type',
+    defaultValue: '1',
+  })
   const watchValue = watch('value')
   const registerValue = {
     ...{
@@ -43,13 +49,13 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     })
   }
 
-  const { data, error, mutate } = useSWR(item !== 0 && `/api/domains/${domain}/${item}`)
+  const { data, mutate } = useSWR(item !== 0 && `/api/domains/${domain}/${item}`)
 
   useEffect(() => {
     if (data) {
       setValue('name', data.name)
       setValue('path', data.path)
-      setValue('type', data.type)
+      setValue('type', `${data.type}`)
       setValue('value', data.value)
       setValue('comment', data.comment)
     } else {
@@ -57,14 +63,14 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
     }
   }, [data])
 
-  const handleTypeChange = (val: string | string[]) => {
-    const type = Number(val)
-    setValue('type', type)
-    setValue('value', '')
-  }
+  // const handleTypeChange = (val: string | string[]) => {
+  //   const type = Number(val)
+  //   setValue('type', type)
+  //   setValue('value', '')
+  // }
 
   const onSubmit = handleSubmit(async (data) => {
-    if (data.type === 4 && data.value === '') {
+    if (data.type === '4' && data.value === '') {
       data.value = 'false'
     }
     setLoading(true)
@@ -75,7 +81,10 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
       body: JSON.stringify(isEdit ? {
         value: data.value,
         comment: data.comment,
-      } : data),
+      } : {
+        ...data,
+        type: Number(data.type),
+      }),
     })
     const result = await res.json()
     if (result.id) {
@@ -122,10 +131,10 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
               </Grid>
               <Grid xs={24} direction="column">
                 <Text h6>Type</Text>
-                <Select disabled={isEdit} placeholder="Choose one" value={`${watchType}`} onChange={handleTypeChange}>
+                <Select disabled={isEdit} placeholder="Choose one" {...register('type', { required: true })}>
                   {
-                    dataKeyType.map((item, index) => (
-                      <Select.Option key={item.text} value={`${item.value}`}>{item.text}</Select.Option>
+                    dataKeyType.map((item) => (
+                      <option key={item.text} value={`${item.value}`}>{item.text}</option>
                     ))
                   }
                 </Select>
@@ -133,22 +142,22 @@ const PackageDetail: React.FC<Props> = ({ visible, setVisible, item, onUpdate })
               <Grid xs={24} direction="column">
                 <Text h6>Value <Text span type="error">{errors.value?.type === 'required' && 'is required'}</Text></Text>
                 {
-                  watchType === 1 && <Input placeholder="Text" width="100%" {...registerValue} />
+                  watchType === '1' && <Input placeholder="Text" width="100%" {...registerValue} />
                 }
                 {
-                  (watchType === 2 || watchType === 9) && <Textarea placeholder="Text" width="100%" {...registerValue} />
+                  (watchType === '2' || watchType === '9') && <Textarea placeholder="Text" width="100%" {...registerValue} />
                 }
                 {
-                  watchType === 3 && <Input placeholder="Number" htmlType="number" {...registerValue} />
+                  watchType === '3' && <Input placeholder="Number" htmlType="number" {...registerValue} />
                 }
                 {
-                  watchType === 4 && <Toggle checked={watchValue === '' || watchValue === 'false' ? false : true} onChange={(e) => setValue('value', `${e.target.checked}`)} />
+                  watchType === '4' && <Toggle checked={watchValue === '' || watchValue === 'false' ? false : true} onChange={(e) => setValue('value', `${e.target.checked}`)} />
                 }
                 {
-                  watchType === 5 && <Input placeholder="Number" max={100} min={0} htmlType="number" {...registerValue} />
+                  watchType === '5' && <Input placeholder="Number" max={100} min={0} htmlType="number" {...registerValue} />
                 }
                 {
-                  watchType === 6 && <Input htmlType="date" {...registerValue} />
+                  watchType === '6' && <Input htmlType="date" {...registerValue} />
                 }
               </Grid>
               <Grid xs={24} direction="column">

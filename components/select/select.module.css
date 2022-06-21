@@ -1,0 +1,86 @@
+.container {
+  --themed-fg: var(--geist-foreground);
+  --themed-bg: var(--geist-background);
+  --themed-border: var(--accent-2);
+
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--themed-fg);
+}
+
+.container.disabled,
+.select:disabled {
+  background: var(--accent-1);
+  border-color: var(--accent-2);
+}
+.container.disabled select {
+  color: var(--body-color);
+  cursor: not-allowed;
+}
+
+.container.error {
+  --themed-fg: #ee0000;
+  --themed-bg: var(--geist-background);
+  --themed-border: var(--themed-fg);
+}
+
+.container:not(.geist-themed):hover .select:not(:disabled),
+/*.select:hover,*/ /* ❌ don't highlight when hovering over an htmlFor label*/
+.select:not(.geist-themed):focus-within {
+  border-color: var(--body-color);
+}
+
+.prefix {
+  left: 12px;
+}
+.suffix {
+  right: 12px;
+}
+
+.prefix,
+.suffix {
+  display: inline-flex;
+  position: absolute;
+  pointer-events: none;
+  box-sizing: inherit;
+}
+
+.prefix + .select {
+  padding-left: calc(1.5 * var(--geist-gap));
+}
+
+.select {
+  font-size: 100%;
+  font: inherit;
+  outline: none;
+  appearance: none;
+  font-size: 0.875rem;
+  height: 40px;
+  line-height: 1.25rem;
+  text-rendering: auto;
+  width: 100%;
+  border-radius: var(--geist-radius);
+  border: 1px solid var(--themed-border);
+  background: var(--themed-bg);
+  color: var(--themed-fg);
+  padding: 0 12px;
+  padding-right: calc(1.5 * 24px);
+  transition: border-color 0.15s ease;
+}
+
+.small {
+  font-size: 0.875rem;
+  height: 32px;
+}
+
+.error_alert {
+  color: #ee0000;
+  font-size: small;
+  padding: 0;
+  border: none;
+}
+.error_alert svg {
+  fill: #ee0000;
+}
