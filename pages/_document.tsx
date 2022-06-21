@@ -10,8 +10,8 @@ class MyDocument extends Document {
     return {
       ...initialProps,
       styles: [
-        ...React.Children.toArray(initialProps.styles),
-        ...styles,
+        initialProps.styles,
+        styles,
       ],
     }
   }

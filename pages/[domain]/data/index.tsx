@@ -1,14 +1,24 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import type { NextPage } from 'next'
-import { Button, Grid, Text, Input, useInput, Table, useModal, Modal, useToasts, Spacer, Select } from '@geist-ui/core'
+import { Button, Table, useModal, Modal, useToasts, Spacer } from '@geist-ui/core'
 import Plus from '@geist-ui/icons/plus'
-import UploadCloud from '@geist-ui/icons/uploadCloud'
 import Layout from 'components/layout'
 import { useRouter } from 'next/router'
-import DataDrawer from 'components/data-drawer'
 import useSWR from 'swr'
 import { DataItem, DataItems } from 'lib/interfaces'
 import FilterTable from 'components/filter-table'
+import dynamic from 'next/dynamic'
+import Skeleton from 'components/skeleton'
+
+const DataDrawer = dynamic(() => import('../../../components/data-drawer'), {
+  ssr: false,
+  loading: () => null,
+})
+
+const PublishModal= dynamic(() => import('../../../components/publish-modal'), {
+  ssr: false,
+  loading: () => <Skeleton width={95} height={32} />,
+})
 
 const Data: NextPage = () => {
   const router = useRouter()
@@ -17,12 +27,9 @@ const Data: NextPage = () => {
   const [loading, setLoading] = useState(false)
   const [current, setCurrent] = useState(0)
   const { setVisible: setModalVisible, bindings: modalBindings } = useModal()
-  const { setVisible: setPublishModalVisible, bindings: publishBindings } = useModal()
-  const [publishPaths, setPublishPaths] = useState<string[]>([])
   const domain = router.query.domain
 
   const { data, error, mutate } = useSWR(domain && `/api/key/${domain}`)
-  const { data: squashList } = useSWR(domain && `/api/squash/${domain}`)
 
   const handleUpdate = (type: string, payload: any) => {
     if (type === 'add') {
@@ -74,6 +81,10 @@ const Data: NextPage = () => {
   const renderAction = (id: number) => {
     return (
       <>
+        <Button auto scale={0.25} onClick={() => setToast({
+          text: 'Removed data Successfully.',
+          type: 'success',
+        })}>toast</Button>
         <Button auto scale={0.25} onClick={() => handleEdit(id)}>Edit</Button>
         <Spacer w={0.5} />
         <Button auto scale={0.25} onClick={() => handleRemove(id)}>Remove</Button>
@@ -83,40 +94,11 @@ const Data: NextPage = () => {
     )
   }
 
-  const handlePublishSelect = (p: string | string[]) => {
-    const paths = Array.isArray(p) ? p : [p]
-    setPublishPaths(paths)
-  }
-
-  const handlePublish = async () => {
-    setPublishPaths(squashList.map((t: any) => t.path))
-    setPublishModalVisible(true)
-  }
-
-  const onPublish = async () => {
-    setLoading(true)
-    const res = await fetch(`/api/publish/${domain}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(publishPaths),
-    })
-    if (res) {
-      setToast({
-        text: 'Publish data Successfully.',
-        type: 'success',
-      })
-      setPublishModalVisible(false)
-    }
-    setLoading(false)
-  }
-
   return (
     <Layout title="Data">
       <FilterTable data={data} filter={['path', 'name', 'value']} buttons={(
         <>
-          <Button auto type="success" icon={<UploadCloud />} onClick={handlePublish} scale={2/3}>
-            Publish
-          </Button>
+          <PublishModal />
           <Spacer w={0.5} />
           <Button auto type="secondary" icon={<Plus />} onClick={handleNew} scale={2/3}>
             New
@@ -137,29 +119,6 @@ const Data: NextPage = () => {
         </Modal.Content>
         <Modal.Action passive onClick={() => setModalVisible(false)}>Cancel</Modal.Action>
         <Modal.Action loading={loading} onClick={onRemove}>OK</Modal.Action>
-      </Modal>
-      <Modal {...publishBindings}>
-        <Modal.Title>Confirm to Publish</Modal.Title>
-        <Modal.Content>
-          {
-            squashList && squashList.length > 0 && (
-              <Select placeholder="Paths" multiple width="100%" value={publishPaths} onChange={handlePublishSelect}>
-                {
-                  squashList.map((item: any) => (
-                    <Select.Option key={item.path} value={item.path}>{item.path}</Select.Option>
-                  ))
-                }
-              </Select>
-            )
-          }
-          {
-            (!squashList || squashList.length === 0) && (
-              <Text>No paths to publish</Text>
-            )
-          }
-        </Modal.Content>
-        <Modal.Action passive onClick={() => setPublishModalVisible(false)}>Cancel</Modal.Action>
-        <Modal.Action loading={loading} onClick={onPublish}>Publish</Modal.Action>
       </Modal>
     </Layout>
   )

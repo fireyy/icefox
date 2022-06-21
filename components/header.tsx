@@ -4,8 +4,14 @@ import NextLink from 'next/link'
 import Controls from './controls'
 import { useTheme, Tabs } from '@geist-ui/core'
 import useSWR from 'swr'
-import DomainSelect from 'components/domain-select'
 import Divider from '@geist-ui/icons/divider'
+import dynamic from 'next/dynamic'
+import Skeleton from './skeleton'
+
+const DomainSelect = dynamic(() => import('./domain-select'), {
+  ssr: false,
+  loading: () => <Skeleton width={100} height={32} />,
+})
 
 const Header: React.FC<unknown> = () => {
   const router = useRouter()
