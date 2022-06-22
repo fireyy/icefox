@@ -64,12 +64,16 @@ export const Dropdown = React.forwardRef<
           cursor: not-allowed;
           color: ${theme.palette.accents_1};
         }
+        .drop-menu-box .item.link {
+          padding: 0;
+        }
         .drop-menu-box .item a,
         .drop-menu-box .item .tooltip {
-          display: block;
           flex: 1;
+          display: block;
           cursor: pointer;
           color: ${theme.palette.accents_5};
+          padding: 8px 12px;
         }
       `}</style>
     </>

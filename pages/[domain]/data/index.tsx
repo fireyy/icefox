@@ -10,12 +10,12 @@ import FilterTable from 'components/filter-table'
 import dynamic from 'next/dynamic'
 import Skeleton from 'components/skeleton'
 
-const DataDrawer = dynamic(() => import('../../../components/data-drawer'), {
+const DataDrawer = dynamic(() => import('components/data-drawer'), {
   ssr: false,
   loading: () => null,
 })
 
-const PublishModal= dynamic(() => import('../../../components/publish-modal'), {
+const PublishModal= dynamic(() => import('components/publish-modal'), {
   ssr: false,
   loading: () => <Skeleton width={95} height={32} />,
 })

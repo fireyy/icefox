@@ -31,17 +31,17 @@ const UserSettingsPop: React.FC<Props> = ({ data }) => {
       {
       data.user.role === 'ADMIN' && (
           <>
-            <DropdownItem>
+            <DropdownItem className="link">
               <NextLink href="/domains">Domains</NextLink>
             </DropdownItem>
-            <DropdownItem>
+            <DropdownItem className="link">
               <NextLink href="/users">Users</NextLink>
             </DropdownItem>
             <DropdownItem line />
           </>
         )
       }
-      <DropdownItem>
+      <DropdownItem disableAutoClose>
         Theme
         <Select
           disableMatchWidth

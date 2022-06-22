@@ -10,7 +10,7 @@ import dynamic from 'next/dynamic'
 import Skeleton from 'components/skeleton'
 import { TableColumnRender, PrivilegeItem, PrivilegeItems } from 'lib/interfaces'
 
-const GiveUserModal= dynamic(() => import('../../components/give-user-modal'), {
+const GiveUserModal= dynamic(() => import('components/give-user-modal'), {
   ssr: false,
   loading: () => <Skeleton width={95} height={32} />
 })

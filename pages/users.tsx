@@ -6,13 +6,14 @@ import useSWR from 'swr'
 import { formatDate } from 'lib/utils'
 import { useSession } from 'next-auth/react'
 import FilterTable from 'components/filter-table'
+import { Users, User, TableColumnRender } from 'lib/interfaces'
 
 const Users: NextPage = () => {
   const { data: session } = useSession()
   const { setToast } = useToasts()
   const [loading, setLoading] = useState(false)
 
-  const { data: users, error, mutate } = useSWR(`/api/users`)
+  const { data: users, error, mutate } = useSWR<Users>(`/api/users`)
 
   const editUser = async (id: number, role: string) => {
     setLoading(true)
@@ -33,12 +34,12 @@ const Users: NextPage = () => {
     setLoading(false)
   }
 
-  const renderAction = (id: number, rowData: any) => {
+  const renderAction: TableColumnRender<User> = (id, rowData) => {
     const role = rowData.role === 'ADMIN' ? 'USER' : 'ADMIN'
     if (Number(session?.user?.id) === id) return <Text span>It&apos;s you</Text>
 
     return (
-      <Button type="secondary" auto scale={1/3} font="12px" onClick={() => editUser(id, role)} loading={loading}>Set As `{role}`</Button>
+      <Button type="secondary" auto scale={1/3} font="12px" onClick={() => editUser(Number(id), role)} loading={loading}>Set As `{role}`</Button>
     )
   }
 

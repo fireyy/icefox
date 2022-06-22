@@ -10,6 +10,7 @@ export type Seed = {
 export type Seeds = Array<Seed>
 
 export type User = USER
+export type Users = Array<User>
 
 export type DataItem = Key & {
   user?: User

@@ -40,7 +40,7 @@ const GiveUserModal: React.FC<Props> = ({ onUpdate }) => {
   const makeOptions = (users: User[]) => {
     return users.map(user => (
       <AutoComplete.Option value={`${user.name}`} key={user.id}>
-        <UserItem src={user.image} name={user.name} py={0.5}>
+        <UserItem src={user.image ?? ''} name={user.name} py={0.5}>
           {user.email}
         </UserItem>
       </AutoComplete.Option>
