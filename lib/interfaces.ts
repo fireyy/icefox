@@ -1,4 +1,4 @@
-import type { User as USER, Key, Domain, changelog, privilege } from '@prisma/client'
+import type { User as USER, Key, Domain, changelog, privilege, publishlog, publishdata } from '@prisma/client'
 
 export type Seed = {
   name: string
@@ -61,3 +61,12 @@ export type PrivilegeItem = privilege & {
 }
 
 export type PrivilegeItems = Array<PrivilegeItem>
+
+export type PublishlogItem = publishlog & {
+  user?: User
+}
+
+export type PublishlogItems = Array<PublishlogItem>
+
+export type PublishdataItem = publishdata
+export type PublishdataItems = Array<PublishdataItem>

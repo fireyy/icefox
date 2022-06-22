@@ -3,34 +3,35 @@ import type { NextPage } from 'next'
 import Layout from 'components/layout'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'
-import { Button, Grid, Table, Drawer, Code } from '@geist-ui/core'
+import { Button, Grid, Table } from '@geist-ui/core'
 import { formatDate } from 'lib/utils'
+import dynamic from 'next/dynamic'
+import { TableColumnRender, PublishlogItem, PublishlogItems } from 'lib/interfaces'
+
+const PublishdataDrawer = dynamic(() => import('components/publishdata-drawer'), {
+  ssr: false
+})
 
 const Publishlog: NextPage = () => {
   const router = useRouter()
   const domain = router.query.domain
   const [drawerVisible, setDrawerVisible] = useState(false)
-  const [publishdata, setPublishdata] = useState([])
+  const [publishdata, setPublishdata] = useState<number>(0)
 
-  const { data } = useSWR(domain && `/api/publishlog/${domain}`)
+  const { data = [] } = useSWR<PublishlogItems>(domain && `/api/publishlog/${domain}`)
 
   const handleDetail = async (id: number) => {
     setDrawerVisible(true)
-    const res = await fetch(`/api/publishdata/${id}`, {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    })
-    const result = await res.json()
-    setPublishdata(result)
+    setPublishdata(id)
   }
 
-  const renderUser = (user: string, rowData: any) => {
+  const renderUser: TableColumnRender<PublishlogItem> = (user, rowData) => {
     return (
-      <>{rowData.user.name}({rowData.user.email})</>
+      <>{rowData?.user?.name}({rowData?.user?.email})</>
     )
   }
 
-  const renderData = (domain: string, rowData: any) => {
+  const renderData: TableColumnRender<PublishlogItem> = (domain, rowData) => {
     return (
       <Button auto scale={0.25} onClick={() => handleDetail(rowData.id)}>Detail</Button>
     )
@@ -48,17 +49,7 @@ const Publishlog: NextPage = () => {
           </Table>
         </Grid>
       </Grid.Container>
-      <Drawer visible={drawerVisible} onClose={() => setDrawerVisible(false)} placement="right">
-        <Drawer.Title>Data</Drawer.Title>
-        <Drawer.Subtitle>This is a drawer</Drawer.Subtitle>
-        <Drawer.Content>
-          <Code block>
-          {
-            publishdata.map((item: any) => (`${item.path} - ${item.name}:${item.value}`)).join('\n')
-          }
-          </Code>
-        </Drawer.Content>
-      </Drawer>
+      <PublishdataDrawer pid={publishdata} visible={drawerVisible} onClose={() => setDrawerVisible(false)} placement="right" />
     </Layout>
   )
 }
