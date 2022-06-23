@@ -69,7 +69,7 @@ const UserSettingsPop: React.FC<Props> = ({ data }) => {
         </Select>
       </DropdownItem>
       <DropdownItem line />
-      <DropdownItem>
+      <DropdownItem className="link">
         <Link href="/api/auth/signout">
           Logout
         </Link>

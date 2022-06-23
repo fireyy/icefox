@@ -46,7 +46,7 @@ export const Dropdown = React.forwardRef<
         .drop-menu-box .item {
           border-radius: 6px;
         }
-        .drop-menu-box .item span {
+        .drop-menu-box .item > span {
           flex: 1;
         }
         .drop-menu-box .item:hover:not(.title) {
